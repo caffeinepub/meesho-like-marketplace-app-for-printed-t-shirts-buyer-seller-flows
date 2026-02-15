@@ -1,2 +1,3 @@
-# meesho-like-marketplace-app-for-printed-t-shirts-buyer-seller-flows
-Exported from Caffeine project: Meesho-like marketplace app for printed T‑shirts (buyer + seller flows)
+## Meesho-like marketplace app for printed T‑shirts (buyer + seller flows)
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

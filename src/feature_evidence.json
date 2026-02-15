@@ -1,0 +1,163 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-a-cohesive-meesho-inspired-marketplace-ux-for-a-printed-t-shirt-business-with-a-consistent-visual-theme-colors-typography-spacing-components-applied-across-all-pages",
+      "featureTitle": "Create a cohesive Meesho-inspired marketplace UX for a printed T‑shirt business, with a consistent visual theme (colors, typography, spacing, components) applied across all pages.",
+      "files": [
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/components/layout/Header.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-internet-identity-authentication-and-show-signed-in-user-context-in-the-ui-signed-out-state-sign-in-button-sign-out-control",
+      "featureTitle": "Implement Internet Identity authentication and show signed-in user context in the UI (signed-out state, sign-in button, sign-out control).",
+      "files": [
+        "frontend/src/components/auth/AccessDeniedScreen.tsx",
+        "frontend/src/components/auth/LoginButton.tsx",
+        "frontend/src/components/auth/ProfileSetupDialog.tsx",
+        "frontend/src/components/auth/ProtectedRoute.tsx",
+        "frontend/src/components/layout/Header.tsx",
+        "frontend/src/hooks/useCurrentUser.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-buyer-storefront-flow-product-listing-page-with-search-and-filters-at-minimum-price-range-and-size-product-detail-page-images-description-sizes-colors-price-and-add-to-cart-functionality-with-cart-page-and-quantity-updates",
+      "featureTitle": "Build the buyer storefront flow: product listing page with search and filters (at minimum: price range and size), product detail page (images, description, sizes/colors, price), and add-to-cart functionality with cart page and quantity updates.",
+      "files": [
+        "frontend/src/cart/CartContext.tsx",
+        "frontend/src/cart/cartTypes.ts",
+        "frontend/src/hooks/useProducts.ts",
+        "frontend/src/pages/CartPage.tsx",
+        "frontend/src/pages/ProductDetailPage.tsx",
+        "frontend/src/pages/StorefrontPage.tsx",
+        "frontend/src/utils/images.ts",
+        "frontend/src/utils/money.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-a-simple-checkout-flow-that-creates-an-order-no-external-payments-collect-shipping-details-name-phone-address-confirm-order-summary-and-submit-the-order-to-the-backend",
+      "featureTitle": "Build a simple checkout flow that creates an order (no external payments): collect shipping details (name, phone, address), confirm order summary, and submit the order to the backend.",
+      "files": [
+        "frontend/src/cart/CartContext.tsx",
+        "frontend/src/hooks/useOrders.ts",
+        "frontend/src/pages/CheckoutPage.tsx",
+        "frontend/src/pages/OrderConfirmationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-buyer-order-history-a-page-where-signed-in-users-can-view-their-orders-and-status-e-g-placed-confirmed-shipped-delivered-cancelled-and-open-an-order-detail-view",
+      "featureTitle": "Add buyer order history: a page where signed-in users can view their orders and status (e.g., Placed, Confirmed, Shipped, Delivered, Cancelled) and open an order detail view.",
+      "files": [
+        "frontend/src/hooks/useOrders.ts",
+        "frontend/src/pages/OrderDetailPage.tsx",
+        "frontend/src/pages/OrdersPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-seller-admin-dashboard-ui-to-manage-products-create-product-title-description-price-sizes-colors-images-edit-product-delete-product-and-view-a-list-of-existing-products",
+      "featureTitle": "Add a seller/admin dashboard UI to manage products: create product (title, description, price, sizes, colors, images), edit product, delete product, and view a list of existing products.",
+      "files": [
+        "frontend/src/components/auth/ProtectedRoute.tsx",
+        "frontend/src/hooks/useAdminProducts.ts",
+        "frontend/src/pages/admin/AdminDashboardPage.tsx",
+        "frontend/src/pages/admin/ProductEditorPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-generate-and-add-required-static-images-to-the-app-and-render-them-from-frontend-public-assets-generated-not-via-backend",
+      "featureTitle": "Generate and add required static images to the app and render them from frontend/public/assets/generated (not via backend).",
+      "files": [
+        "frontend/src/components/layout/Header.tsx",
+        "frontend/src/pages/StorefrontPage.tsx",
+        "frontend/src/utils/images.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

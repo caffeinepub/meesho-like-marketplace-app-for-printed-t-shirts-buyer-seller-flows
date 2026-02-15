@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Plan to build an e-commerce/marketplace app similar to Meesho focused on selling printed T-shirts.",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Marketplace logo mark + wordmark (logo.dim_512x512.png)\n- Homepage hero banner featuring printed T‑shirts laid out in a clean marketplace style (hero-banner.dim_1600x600.png)\n- Empty-state illustration with shopping bag and T‑shirt motif (empty-state.dim_1200x800.png)\n- Neutral product placeholder image with T‑shirt silhouette (product-placeholder.dim_800x800.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-a-cohesive-meesho-inspired-marketplace-ux-for-a-printed-t-shirt-business-with-a-consistent-visual-theme-colors-typography-spacing-components-applied-across-all-pages",
+      "title": "Create a cohesive Meesho-inspired marketplace UX for a printed T‑shirt business, with a consistent visual theme (colors, typography, spacing, components) applied across all pages.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-internet-identity-authentication-and-show-signed-in-user-context-in-the-ui-signed-out-state-sign-in-button-sign-out-control",
+      "title": "Implement Internet Identity authentication and show signed-in user context in the UI (signed-out state, sign-in button, sign-out control).",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-buyer-storefront-flow-product-listing-page-with-search-and-filters-at-minimum-price-range-and-size-product-detail-page-images-description-sizes-colors-price-and-add-to-cart-functionality-with-cart-page-and-quantity-updates",
+      "title": "Build the buyer storefront flow: product listing page with search and filters (at minimum: price range and size), product detail page (images, description, sizes/colors, price), and add-to-cart functionality with cart page and quantity updates.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-simple-checkout-flow-that-creates-an-order-no-external-payments-collect-shipping-details-name-phone-address-confirm-order-summary-and-submit-the-order-to-the-backend",
+      "title": "Build a simple checkout flow that creates an order (no external payments): collect shipping details (name, phone, address), confirm order summary, and submit the order to the backend.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-buyer-order-history-a-page-where-signed-in-users-can-view-their-orders-and-status-e-g-placed-confirmed-shipped-delivered-cancelled-and-open-an-order-detail-view",
+      "title": "Add buyer order history: a page where signed-in users can view their orders and status (e.g., Placed, Confirmed, Shipped, Delivered, Cancelled) and open an order detail view.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-seller-admin-dashboard-ui-to-manage-products-create-product-title-description-price-sizes-colors-images-edit-product-delete-product-and-view-a-list-of-existing-products",
+      "title": "Add a seller/admin dashboard UI to manage products: create product (title, description, price, sizes, colors, images), edit product, delete product, and view a list of existing products.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-and-add-required-static-images-to-the-app-and-render-them-from-frontend-public-assets-generated-not-via-backend",
+      "title": "Generate and add required static images to the app and render them from frontend/public/assets/generated (not via backend).",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Build a Meesho-like marketplace/e-commerce app for selling printed T-shirts.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Implement backend marketplace data model and APIs in the single Motoko actor to support: product catalog CRUD (for sellers/admin), product listing with basic query parameters (search, filters), cart-independent order creation, and per-user order retrieval.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Seed the app with a small set of demo printed T‑shirt products (including multiple sizes/colors) so the storefront is usable immediately after deployment.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Meesho-like marketplace app for printed T‑shirts (buyer + seller flows)",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

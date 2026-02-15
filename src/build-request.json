@@ -1,0 +1,194 @@
+{
+  "kind": "build_request",
+  "title": "Meesho-like marketplace app for printed T‑shirts (buyer + seller flows)",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Create a cohesive Meesho-inspired marketplace UX for a printed T‑shirt business, with a consistent visual theme (colors, typography, spacing, components) applied across all pages.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "So create a app like meesho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "App UI uses a single consistent design system (colors/type/spacing) across pages.",
+        "No user-facing text is left as placeholder lorem ipsum; all user-facing text is in English."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement Internet Identity authentication and show signed-in user context in the UI (signed-out state, sign-in button, sign-out control).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "So create a app like meesho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A signed-out user can sign in using Internet Identity.",
+        "A signed-in user can sign out and returns to signed-out state.",
+        "UI clearly indicates whether the user is signed in."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Build the buyer storefront flow: product listing page with search and filters (at minimum: price range and size), product detail page (images, description, sizes/colors, price), and add-to-cart functionality with cart page and quantity updates.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "I wana make a business of printed t shirts",
+          "So create a app like meesho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Users can browse a grid/list of T‑shirt products.",
+        "Search filters visible products by keyword.",
+        "Filters can narrow products by price range and size.",
+        "Product detail page shows all key product information and allows selecting size/color (when available).",
+        "Cart persists within the session and supports add/remove/update quantity.",
+        "Cart shows item totals and overall total."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Build a simple checkout flow that creates an order (no external payments): collect shipping details (name, phone, address), confirm order summary, and submit the order to the backend.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "So create a app like meesho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Checkout form validates required fields before submission.",
+        "Submitting checkout creates an order record in the backend tied to the signed-in user.",
+        "After successful submission, user sees an order confirmation page with an order ID and summary."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add buyer order history: a page where signed-in users can view their orders and status (e.g., Placed, Confirmed, Shipped, Delivered, Cancelled) and open an order detail view.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "So create a app like meesho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Signed-in users can view a list of their orders.",
+        "Each order displays status and total.",
+        "Selecting an order shows order items, shipping details, timestamps (if stored), and current status."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Implement backend marketplace data model and APIs in the single Motoko actor to support: product catalog CRUD (for sellers/admin), product listing with basic query parameters (search, filters), cart-independent order creation, and per-user order retrieval.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "I wana make a business of printed t shirts",
+          "So create a app like meesho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend stores products and orders in stable state so data persists across upgrades.",
+        "Backend exposes methods to: list products, get product by ID, create/update/delete product (restricted), create order, list orders for caller, get order by ID (restricted to owner/admin).",
+        "Product listing supports at least keyword search and filter parameters used by the frontend."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add a seller/admin dashboard UI to manage products: create product (title, description, price, sizes, colors, images), edit product, delete product, and view a list of existing products.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "So create a app like meesho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "There is a protected dashboard area accessible only to authorized principals (admin/seller).",
+        "Authorized users can create, edit, and delete products, and changes are reflected in the buyer storefront.",
+        "Unauthorized users cannot access backend product management methods."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Seed the app with a small set of demo printed T‑shirt products (including multiple sizes/colors) so the storefront is usable immediately after deployment.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "I wana make a business of printed t shirts"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On a fresh deployment, the storefront shows multiple sample products without requiring manual product entry first.",
+        "Seed data includes at least 6 products with varied prices and at least 2 sizes per product."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Generate and add required static images to the app and render them from frontend/public/assets/generated (not via backend).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "So create a app like meesho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All required generated images exist under frontend/public/assets/generated.",
+        "Frontend references these images as static assets (e.g., in header/hero/empty states) without calling the backend to fetch them."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
+    "Do not add external databases or third-party auth providers; use Internet Identity only.",
+    "Do not modify files under frontend/src/components/ui or other immutablePaths; compose existing UI components instead.",
+    "No real-time features (no WebSockets/push notifications)."
+  ],
+  "nonGoals": [
+    "Integrating real payment providers (Stripe/UPI/cards) or external checkout.",
+    "Shipping carrier integrations, live tracking, label generation, or address validation APIs.",
+    "Social/reseller referral network features (commissions, invite trees) beyond basic buyer/seller flows.",
+    "Native mobile apps (iOS/Android) or React Native implementation."
+  ],
+  "imageRequirements": {
+    "required": [
+      "Marketplace logo mark + wordmark (logo.dim_512x512.png)",
+      "Homepage hero banner featuring printed T‑shirts laid out in a clean marketplace style (hero-banner.dim_1600x600.png)",
+      "Empty-state illustration with shopping bag and T‑shirt motif (empty-state.dim_1200x800.png)",
+      "Neutral product placeholder image with T‑shirt silhouette (product-placeholder.dim_800x800.png)"
+    ],
+    "edits": []
+  }
+}

@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.75rem;
+        /* Vibrant marketplace theme - warm and inviting */
+        --background: 0.99 0.01 60;
+        --foreground: 0.25 0.02 280;
+        --card: 1 0 0;
+        --card-foreground: 0.25 0.02 280;
+        --popover: 1 0 0;
+        --popover-foreground: 0.25 0.02 280;
+        /* Vibrant purple-pink primary */
+        --primary: 0.55 0.22 320;
+        --primary-foreground: 0.99 0 0;
+        /* Soft peach secondary */
+        --secondary: 0.95 0.05 50;
+        --secondary-foreground: 0.35 0.08 40;
+        --muted: 0.96 0.01 280;
+        --muted-foreground: 0.55 0.02 280;
+        /* Warm accent */
+        --accent: 0.92 0.08 40;
+        --accent-foreground: 0.35 0.08 40;
+        --destructive: 0.58 0.24 25;
+        --destructive-foreground: 0.99 0 0;
+        --border: 0.90 0.02 280;
+        --input: 0.90 0.02 280;
+        --ring: 0.55 0.22 320;
+        --chart-1: 0.55 0.22 320;
+        --chart-2: 0.65 0.18 200;
+        --chart-3: 0.70 0.15 150;
+        --chart-4: 0.60 0.20 40;
+        --chart-5: 0.75 0.12 100;
+        /* Success color for order status */
+        --success: 0.65 0.18 150;
+        --success-foreground: 0.99 0 0;
+    }
+
+    .dark {
+        --background: 0.18 0.02 280;
+        --foreground: 0.95 0.01 280;
+        --card: 0.22 0.02 280;
+        --card-foreground: 0.95 0.01 280;
+        --popover: 0.22 0.02 280;
+        --popover-foreground: 0.95 0.01 280;
+        --primary: 0.65 0.20 320;
+        --primary-foreground: 0.99 0 0;
+        --secondary: 0.28 0.03 280;
+        --secondary-foreground: 0.95 0.01 280;
+        --muted: 0.28 0.03 280;
+        --muted-foreground: 0.65 0.02 280;
+        --accent: 0.35 0.05 40;
+        --accent-foreground: 0.95 0.01 280;
+        --destructive: 0.60 0.22 25;
+        --destructive-foreground: 0.95 0.01 280;
+        --border: 0.30 0.02 280;
+        --input: 0.30 0.02 280;
+        --ring: 0.65 0.20 320;
+        --success: 0.60 0.16 150;
+        --success-foreground: 0.99 0 0;
+    }
+
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+}
+
+@layer components {
+    .container-custom {
+        @apply container mx-auto px-4 sm:px-6 lg:px-8;
+    }
+}
