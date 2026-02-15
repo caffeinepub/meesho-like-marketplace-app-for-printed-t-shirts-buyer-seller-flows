@@ -10,7 +10,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, SlidersHorizontal } from 'lucide-react';
 import { formatPrice } from '../utils/money';
-import { blobToImageUrl } from '../utils/images';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 export default function StorefrontPage() {
@@ -206,7 +205,7 @@ export default function StorefrontPage() {
                     <CardContent className="p-0">
                       <div className="aspect-square overflow-hidden rounded-t-lg bg-muted">
                         <img
-                          src={blobToImageUrl(product.imageBlob)}
+                          src={product.imageRef.getDirectURL()}
                           alt={product.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />

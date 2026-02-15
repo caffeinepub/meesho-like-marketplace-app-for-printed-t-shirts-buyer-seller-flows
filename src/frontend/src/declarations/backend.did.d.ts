@@ -10,12 +10,24 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface ContactInfo {
+  'email' : string,
+  'shippingAddress' : ShippingAddress,
+}
+export type ExternalBlob = Uint8Array;
+export interface MarketplaceSettings {
+  'displayName' : string,
+  'tagline' : string,
+  'logo' : [] | [ExternalBlob],
+}
 export interface Order {
   'status' : OrderStatus,
+  'contactInfo' : ContactInfo,
+  'promoApplied' : boolean,
   'createdAt' : bigint,
   'totalCents' : bigint,
   'orderId' : OrderId,
-  'shippingAddress' : ShippingAddress,
+  'promoCode' : [] | [string],
   'buyer' : Principal,
   'items' : Array<OrderItem>,
 }
@@ -33,14 +45,20 @@ export type OrderStatus = { 'shipped' : null } |
   { 'confirmed' : null };
 export interface Product {
   'title' : string,
-  'imageBlob' : Uint8Array,
   'description' : string,
   'productId' : ProductId,
   'sizes' : Array<string>,
+  'imageRef' : ExternalBlob,
   'colors' : Array<string>,
   'priceCents' : bigint,
 }
 export type ProductId = number;
+export interface ReferralSummaryView {
+  'totalCommissions' : bigint,
+  'referrer' : Principal,
+  'availableBalance' : bigint,
+  'referredUsers' : Array<Principal>,
+}
 export interface ShippingAddress {
   'zip' : string,
   'city' : string,
@@ -49,28 +67,74 @@ export interface ShippingAddress {
   'addressLine2' : [] | [string],
   'phone' : string,
 }
-export interface UserProfile { 'name' : string }
+export interface UserProfile {
+  'name' : string,
+  'email' : string,
+  'address' : [] | [ShippingAddress],
+  'phone' : string,
+}
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'applyReferralCode' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'createOrder' : ActorMethod<[Array<OrderItem>, ShippingAddress], Order>,
+  'createOrder' : ActorMethod<
+    [Array<OrderItem>, ContactInfo, [] | [string]],
+    Order
+  >,
   'createProduct' : ActorMethod<
-    [string, string, bigint, Array<string>, Array<string>, Uint8Array],
+    [string, string, bigint, Array<string>, Array<string>, ExternalBlob],
     Product
   >,
+  'deleteCallerUserProfile' : ActorMethod<[], undefined>,
   'deleteProduct' : ActorMethod<[ProductId], undefined>,
   'getAllProducts' : ActorMethod<[], Array<Product>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getMarketplaceSettings' : ActorMethod<[], MarketplaceSettings>,
   'getMyOrders' : ActorMethod<[], Array<Order>>,
+  'getOrCreateReferralCode' : ActorMethod<[], string>,
   'getOrder' : ActorMethod<[OrderId], Order>,
+  'getOwnReferralSummary' : ActorMethod<[], ReferralSummaryView>,
   'getProduct' : ActorMethod<[ProductId], Product>,
+  'getReferralSummary' : ActorMethod<[Principal], ReferralSummaryView>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'grantAdminRole' : ActorMethod<[Principal], undefined>,
+  'grantUserRole' : ActorMethod<[Principal], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isFounderEmail' : ActorMethod<[string], boolean>,
+  'revokeAdminRole' : ActorMethod<[Principal], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'saveMarketplaceLogo' : ActorMethod<[ExternalBlob], undefined>,
+  'saveMarketplaceName' : ActorMethod<[string], undefined>,
   'updateOrderStatus' : ActorMethod<[OrderId, OrderStatus], undefined>,
   'updateProduct' : ActorMethod<
     [
@@ -80,10 +144,11 @@ export interface _SERVICE {
       bigint,
       Array<string>,
       Array<string>,
-      Uint8Array,
+      ExternalBlob,
     ],
     Product
   >,
+  'updateTagline' : ActorMethod<[string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

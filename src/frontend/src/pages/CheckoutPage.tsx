@@ -7,13 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
 import { formatPrice } from '../utils/money';
 import { toast } from 'sonner';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import ProfileSetupDialog from '../components/auth/ProfileSetupDialog';
 import { useGetCallerUserProfile } from '../hooks/useCurrentUser';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { isPromoCodeValid, calculateDiscount } from '../utils/promoCodes';
 import type { OrderItem } from '../backend';
 
 function CheckoutPageContent() {
@@ -24,6 +26,7 @@ function CheckoutPageContent() {
   const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
 
   const [formData, setFormData] = useState({
+    email: '',
     fullName: '',
     phone: '',
     addressLine1: '',
@@ -32,14 +35,57 @@ function CheckoutPageContent() {
     zip: ''
   });
 
+  const [promoCode, setPromoCode] = useState('');
+  const [promoValidated, setPromoValidated] = useState(false);
+  const [promoError, setPromoError] = useState('');
+
   const isAuthenticated = !!identity;
   const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
+
+  const subtotalCents = getTotalCents();
+  const { discountCents, finalTotalCents, isValid: isPromoValid } = calculateDiscount(
+    subtotalCents,
+    promoValidated && promoCode ? promoCode : null
+  );
+
+  const handlePromoCodeChange = (value: string) => {
+    setPromoCode(value);
+    setPromoValidated(false);
+    setPromoError('');
+  };
+
+  const handlePromoCodeBlur = () => {
+    if (promoCode.trim()) {
+      if (isPromoCodeValid(promoCode)) {
+        setPromoValidated(true);
+        setPromoError('');
+      } else {
+        setPromoValidated(false);
+        setPromoError('Invalid promo code. Please check and try again.');
+      }
+    } else {
+      setPromoValidated(false);
+      setPromoError('');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (cart.length === 0) {
       toast.error('Your cart is empty');
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      toast.error('Email is required');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error('Please enter a valid email address');
       return;
     }
 
@@ -53,14 +99,18 @@ function CheckoutPageContent() {
     try {
       const order = await createOrder.mutateAsync({
         items: orderItems,
-        shippingAddress: {
-          fullName: formData.fullName,
-          phone: formData.phone,
-          addressLine1: formData.addressLine1,
-          addressLine2: formData.addressLine2 || undefined,
-          city: formData.city,
-          zip: formData.zip
-        }
+        contactInfo: {
+          email: formData.email.trim(),
+          shippingAddress: {
+            fullName: formData.fullName,
+            phone: formData.phone,
+            addressLine1: formData.addressLine1,
+            addressLine2: formData.addressLine2 || undefined,
+            city: formData.city,
+            zip: formData.zip
+          }
+        },
+        promoCode: promoValidated && promoCode ? promoCode.trim() : null
       });
 
       clearCart();
@@ -100,10 +150,28 @@ function CheckoutPageContent() {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Shipping Information</CardTitle>
+                <CardTitle>Contact & Shipping Information</CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Email Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      placeholder="your.email@example.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      We'll send your order confirmation to this email
+                    </p>
+                  </div>
+
+                  <Separator className="my-6" />
+
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="fullName">Full Name *</Label>
@@ -137,7 +205,7 @@ function CheckoutPageContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="addressLine2">Address Line 2</Label>
+                    <Label htmlFor="addressLine2">Address Line 2 (Optional)</Label>
                     <Input
                       id="addressLine2"
                       value={formData.addressLine2}
@@ -164,6 +232,53 @@ function CheckoutPageContent() {
                         onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
                       />
                     </div>
+                  </div>
+
+                  <Separator className="my-6" />
+
+                  {/* Promo Code */}
+                  <div className="space-y-2">
+                    <Label htmlFor="promoCode">Promo Code (Optional)</Label>
+                    <div className="flex gap-2">
+                      <div className="flex-1 relative">
+                        <Input
+                          id="promoCode"
+                          placeholder="Enter promo code"
+                          value={promoCode}
+                          onChange={(e) => handlePromoCodeChange(e.target.value)}
+                          onBlur={handlePromoCodeBlur}
+                          className={
+                            promoCode && promoValidated
+                              ? 'border-success'
+                              : promoError
+                              ? 'border-destructive'
+                              : ''
+                          }
+                        />
+                        {promoCode && promoValidated && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-success" />
+                        )}
+                        {promoError && (
+                          <XCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-destructive" />
+                        )}
+                      </div>
+                    </div>
+                    {promoValidated && isPromoValid && (
+                      <Alert className="border-success/50 bg-success/10">
+                        <CheckCircle2 className="h-4 w-4 text-success" />
+                        <AlertDescription className="text-success">
+                          Promo code applied! You'll save 50% on this order.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    {promoError && (
+                      <Alert className="border-destructive/50 bg-destructive/10">
+                        <XCircle className="h-4 w-4 text-destructive" />
+                        <AlertDescription className="text-destructive">
+                          {promoError}
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   </div>
 
                   <Button
@@ -209,9 +324,25 @@ function CheckoutPageContent() {
 
                 <Separator />
 
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(subtotalCents)}</span>
+                  </div>
+
+                  {promoValidated && isPromoValid && (
+                    <div className="flex justify-between text-sm text-success">
+                      <span>Discount (50% off)</span>
+                      <span>-{formatPrice(discountCents)}</span>
+                    </div>
+                  )}
+                </div>
+
+                <Separator />
+
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">{formatPrice(getTotalCents())}</span>
+                  <span className="text-primary">{formatPrice(finalTotalCents)}</span>
                 </div>
               </CardContent>
             </Card>

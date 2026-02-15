@@ -8,6 +8,17 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -28,6 +39,10 @@ export const ShippingAddress = IDL.Record({
   'addressLine2' : IDL.Opt(IDL.Text),
   'phone' : IDL.Text,
 });
+export const ContactInfo = IDL.Record({
+  'email' : IDL.Text,
+  'shippingAddress' : ShippingAddress,
+});
 export const OrderStatus = IDL.Variant({
   'shipped' : IDL.Null,
   'cancelled' : IDL.Null,
@@ -38,28 +53,78 @@ export const OrderStatus = IDL.Variant({
 export const OrderId = IDL.Nat32;
 export const Order = IDL.Record({
   'status' : OrderStatus,
+  'contactInfo' : ContactInfo,
+  'promoApplied' : IDL.Bool,
   'createdAt' : IDL.Int,
   'totalCents' : IDL.Nat,
   'orderId' : OrderId,
-  'shippingAddress' : ShippingAddress,
+  'promoCode' : IDL.Opt(IDL.Text),
   'buyer' : IDL.Principal,
   'items' : IDL.Vec(OrderItem),
 });
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const Product = IDL.Record({
   'title' : IDL.Text,
-  'imageBlob' : IDL.Vec(IDL.Nat8),
   'description' : IDL.Text,
   'productId' : ProductId,
   'sizes' : IDL.Vec(IDL.Text),
+  'imageRef' : ExternalBlob,
   'colors' : IDL.Vec(IDL.Text),
   'priceCents' : IDL.Nat,
 });
-export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const UserProfile = IDL.Record({
+  'name' : IDL.Text,
+  'email' : IDL.Text,
+  'address' : IDL.Opt(ShippingAddress),
+  'phone' : IDL.Text,
+});
+export const MarketplaceSettings = IDL.Record({
+  'displayName' : IDL.Text,
+  'tagline' : IDL.Text,
+  'logo' : IDL.Opt(ExternalBlob),
+});
+export const ReferralSummaryView = IDL.Record({
+  'totalCommissions' : IDL.Nat,
+  'referrer' : IDL.Principal,
+  'availableBalance' : IDL.Nat,
+  'referredUsers' : IDL.Vec(IDL.Principal),
+});
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'applyReferralCode' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'createOrder' : IDL.Func([IDL.Vec(OrderItem), ShippingAddress], [Order], []),
+  'createOrder' : IDL.Func(
+      [IDL.Vec(OrderItem), ContactInfo, IDL.Opt(IDL.Text)],
+      [Order],
+      [],
+    ),
   'createProduct' : IDL.Func(
       [
         IDL.Text,
@@ -67,25 +132,40 @@ export const idlService = IDL.Service({
         IDL.Nat,
         IDL.Vec(IDL.Text),
         IDL.Vec(IDL.Text),
-        IDL.Vec(IDL.Nat8),
+        ExternalBlob,
       ],
       [Product],
       [],
     ),
+  'deleteCallerUserProfile' : IDL.Func([], [], []),
   'deleteProduct' : IDL.Func([ProductId], [], []),
   'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getMarketplaceSettings' : IDL.Func([], [MarketplaceSettings], ['query']),
   'getMyOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
+  'getOrCreateReferralCode' : IDL.Func([], [IDL.Text], []),
   'getOrder' : IDL.Func([OrderId], [Order], ['query']),
+  'getOwnReferralSummary' : IDL.Func([], [ReferralSummaryView], ['query']),
   'getProduct' : IDL.Func([ProductId], [Product], ['query']),
+  'getReferralSummary' : IDL.Func(
+      [IDL.Principal],
+      [ReferralSummaryView],
+      ['query'],
+    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'grantAdminRole' : IDL.Func([IDL.Principal], [], []),
+  'grantUserRole' : IDL.Func([IDL.Principal], [], []),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isFounderEmail' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+  'revokeAdminRole' : IDL.Func([IDL.Principal], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'saveMarketplaceLogo' : IDL.Func([ExternalBlob], [], []),
+  'saveMarketplaceName' : IDL.Func([IDL.Text], [], []),
   'updateOrderStatus' : IDL.Func([OrderId, OrderStatus], [], []),
   'updateProduct' : IDL.Func(
       [
@@ -95,16 +175,28 @@ export const idlService = IDL.Service({
         IDL.Nat,
         IDL.Vec(IDL.Text),
         IDL.Vec(IDL.Text),
-        IDL.Vec(IDL.Nat8),
+        ExternalBlob,
       ],
       [Product],
       [],
     ),
+  'updateTagline' : IDL.Func([IDL.Text], [], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
@@ -125,6 +217,10 @@ export const idlFactory = ({ IDL }) => {
     'addressLine2' : IDL.Opt(IDL.Text),
     'phone' : IDL.Text,
   });
+  const ContactInfo = IDL.Record({
+    'email' : IDL.Text,
+    'shippingAddress' : ShippingAddress,
+  });
   const OrderStatus = IDL.Variant({
     'shipped' : IDL.Null,
     'cancelled' : IDL.Null,
@@ -135,29 +231,75 @@ export const idlFactory = ({ IDL }) => {
   const OrderId = IDL.Nat32;
   const Order = IDL.Record({
     'status' : OrderStatus,
+    'contactInfo' : ContactInfo,
+    'promoApplied' : IDL.Bool,
     'createdAt' : IDL.Int,
     'totalCents' : IDL.Nat,
     'orderId' : OrderId,
-    'shippingAddress' : ShippingAddress,
+    'promoCode' : IDL.Opt(IDL.Text),
     'buyer' : IDL.Principal,
     'items' : IDL.Vec(OrderItem),
   });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
   const Product = IDL.Record({
     'title' : IDL.Text,
-    'imageBlob' : IDL.Vec(IDL.Nat8),
     'description' : IDL.Text,
     'productId' : ProductId,
     'sizes' : IDL.Vec(IDL.Text),
+    'imageRef' : ExternalBlob,
     'colors' : IDL.Vec(IDL.Text),
     'priceCents' : IDL.Nat,
   });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const UserProfile = IDL.Record({
+    'name' : IDL.Text,
+    'email' : IDL.Text,
+    'address' : IDL.Opt(ShippingAddress),
+    'phone' : IDL.Text,
+  });
+  const MarketplaceSettings = IDL.Record({
+    'displayName' : IDL.Text,
+    'tagline' : IDL.Text,
+    'logo' : IDL.Opt(ExternalBlob),
+  });
+  const ReferralSummaryView = IDL.Record({
+    'totalCommissions' : IDL.Nat,
+    'referrer' : IDL.Principal,
+    'availableBalance' : IDL.Nat,
+    'referredUsers' : IDL.Vec(IDL.Principal),
+  });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'applyReferralCode' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createOrder' : IDL.Func(
-        [IDL.Vec(OrderItem), ShippingAddress],
+        [IDL.Vec(OrderItem), ContactInfo, IDL.Opt(IDL.Text)],
         [Order],
         [],
       ),
@@ -168,25 +310,40 @@ export const idlFactory = ({ IDL }) => {
           IDL.Nat,
           IDL.Vec(IDL.Text),
           IDL.Vec(IDL.Text),
-          IDL.Vec(IDL.Nat8),
+          ExternalBlob,
         ],
         [Product],
         [],
       ),
+    'deleteCallerUserProfile' : IDL.Func([], [], []),
     'deleteProduct' : IDL.Func([ProductId], [], []),
     'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getMarketplaceSettings' : IDL.Func([], [MarketplaceSettings], ['query']),
     'getMyOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
+    'getOrCreateReferralCode' : IDL.Func([], [IDL.Text], []),
     'getOrder' : IDL.Func([OrderId], [Order], ['query']),
+    'getOwnReferralSummary' : IDL.Func([], [ReferralSummaryView], ['query']),
     'getProduct' : IDL.Func([ProductId], [Product], ['query']),
+    'getReferralSummary' : IDL.Func(
+        [IDL.Principal],
+        [ReferralSummaryView],
+        ['query'],
+      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'grantAdminRole' : IDL.Func([IDL.Principal], [], []),
+    'grantUserRole' : IDL.Func([IDL.Principal], [], []),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isFounderEmail' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'revokeAdminRole' : IDL.Func([IDL.Principal], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'saveMarketplaceLogo' : IDL.Func([ExternalBlob], [], []),
+    'saveMarketplaceName' : IDL.Func([IDL.Text], [], []),
     'updateOrderStatus' : IDL.Func([OrderId, OrderStatus], [], []),
     'updateProduct' : IDL.Func(
         [
@@ -196,11 +353,12 @@ export const idlFactory = ({ IDL }) => {
           IDL.Nat,
           IDL.Vec(IDL.Text),
           IDL.Vec(IDL.Text),
-          IDL.Vec(IDL.Nat8),
+          ExternalBlob,
         ],
         [Product],
         [],
       ),
+    'updateTagline' : IDL.Func([IDL.Text], [], []),
   });
 };
 

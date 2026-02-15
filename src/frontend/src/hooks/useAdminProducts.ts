@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
+import { ExternalBlob } from '../backend';
 import type { Product, ProductId } from '../backend';
 
 interface CreateProductInput {
@@ -22,13 +23,14 @@ export function useCreateProduct() {
   return useMutation({
     mutationFn: async (input: CreateProductInput) => {
       if (!actor) throw new Error('Actor not available');
+      const imageRef = ExternalBlob.fromBytes(new Uint8Array(input.imageBlob));
       return actor.createProduct(
         input.title,
         input.description,
         input.priceCents,
         input.sizes,
         input.colors,
-        input.imageBlob
+        imageRef
       );
     },
     onSuccess: () => {
@@ -44,6 +46,7 @@ export function useUpdateProduct() {
   return useMutation({
     mutationFn: async (input: UpdateProductInput) => {
       if (!actor) throw new Error('Actor not available');
+      const imageRef = ExternalBlob.fromBytes(new Uint8Array(input.imageBlob));
       return actor.updateProduct(
         input.productId,
         input.title,
@@ -51,7 +54,7 @@ export function useUpdateProduct() {
         input.priceCents,
         input.sizes,
         input.colors,
-        input.imageBlob
+        imageRef
       );
     },
     onSuccess: (_, variables) => {

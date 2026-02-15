@@ -1,11 +1,19 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
+  "projectStateVersion": 9,
   "summary": "Plan to build an e-commerce/marketplace app similar to Meesho focused on selling printed T-shirts.",
-  "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Marketplace logo mark + wordmark (logo.dim_512x512.png)\n- Homepage hero banner featuring printed T‑shirts laid out in a clean marketplace style (hero-banner.dim_1600x600.png)\n- Empty-state illustration with shopping bag and T‑shirt motif (empty-state.dim_1200x800.png)\n- Neutral product placeholder image with T‑shirt silhouette (product-placeholder.dim_800x800.png)",
+  "architectural_notes": [
+    "Add an admin/settings module for marketplace branding (app name + logo asset management) and access control for privileged actions.",
+    "Referral system needs data model for referral codes, attribution (who referred whom), and redemption/usage tracking.",
+    "Branding requirements updated: marketplace display name should be \"AMERICAN PRINTERS\" and include a subtitle/tagline \"unique printers, legend stop\" alongside a custom logo used across the UI.",
+    "Checkout/order model should include buyer contact fields (email, phone) plus shipping address; referral code should be optional input stored with the order.",
+    "Implement promo/referral code validation against an allowlist and apply a 50% discount at order-total calculation time.",
+    "Auth/roles need to distinguish customer vs seller/admin, and treat mercutiose369@gmail.com as founder with elevated privileges."
+  ],
+  "known_issues": [
+    "Login process is currently not working and needs investigation/fix."
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-a-cohesive-meesho-inspired-marketplace-ux-for-a-printed-t-shirt-business-with-a-consistent-visual-theme-colors-typography-spacing-components-applied-across-all-pages",
@@ -62,6 +70,110 @@
         "REQ-9"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-implement-role-based-admin-management-so-that-an-existing-admin-can-grant-and-revoke-full-access-admin-permissions-for-other-principals",
+      "title": "Implement role-based admin management so that an existing admin can grant and revoke “full access” (admin permissions) for other principals.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-marketplace-branding-settings-to-allow-admins-to-change-the-marketplace-app-display-name-and-upload-a-custom-logo-and-use-these-settings-across-the-ui",
+      "title": "Add marketplace branding settings to allow admins to change the marketplace/app display name and upload a custom logo, and use these settings across the UI.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-referral-code-system-that-supports-generating-a-user-s-referral-code-applying-a-referral-code-for-the-currently-signed-in-user-and-tracking-basic-referral-counts",
+      "title": "Implement a referral code system that supports generating a user’s referral code, applying a referral code for the currently signed-in user, and tracking basic referral counts.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-marketplace-branding-defaults-so-the-app-display-name-is-exactly-american-printers-and-the-subtitle-tagline-is-exactly-unique-printers-legend-stop",
+      "title": "Update the marketplace branding defaults so the app display name is exactly \"AMERICAN PRINTERS\" and the subtitle/tagline is exactly \"Unique printers, legend stop.\"",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-admin-dashboard-branding-tab-ui-to-view-and-edit-the-marketplace-subtitle-tagline-alongside-the-existing-display-name-and-logo-controls",
+      "title": "Update the Admin Dashboard \"Branding\" tab UI to view and edit the marketplace subtitle/tagline alongside the existing display name and logo controls.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-the-marketplace-subtitle-tagline-in-the-public-ui-using-marketplace-settings-e-g-in-the-header-near-the-brand-name-and-ensure-the-header-continues-to-work-when-a-logo-is-not-uploaded-fallback-to-a-generated-static-logo-asset",
+      "title": "Display the marketplace subtitle/tagline in the public UI using marketplace settings (e.g., in the header near the brand name) and ensure the header continues to work when a logo is not uploaded (fallback to a generated static logo asset).",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-static-html-document-title-to-use-the-new-brand-name-american-printers-in-english",
+      "title": "Update the static HTML document title to use the new brand name (AMERICAN PRINTERS) in English.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-checkout-form-to-collect-an-email-address-in-addition-to-the-existing-required-fields-full-name-phone-number-and-shipping-address",
+      "title": "Update the checkout form to collect an email address in addition to the existing required fields (full name, phone number, and shipping address).",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-optional-promo-referral-code-input-to-checkout-and-apply-a-50-discount-to-the-current-order-total-when-the-entered-code-matches-one-of-the-predefined-codes-x7p9k2q4-l3m8z1t6-r5v2n9c7-b8q4y6w1-t2h7j5k9-p9d3f8l2-z4x6c1v8-n7m2a5s9-k1r8e4t3-w6y9u2i5-c3b7n1m8-j8l4p6q2",
+      "title": "Add an optional promo/referral code input to checkout and apply a 50% discount to the current order total when the entered code matches one of the predefined codes: X7P9K2Q4, L3M8Z1T6, R5V2N9C7, B8Q4Y6W1, T2H7J5K9, P9D3F8L2, Z4X6C1V8, N7M2A5S9, K1R8E4T3, W6Y9U2I5, C3B7N1M8, J8L4P6Q2.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-current-internet-identity-login-flow-so-that-users-can-reliably-sign-in-and-sign-out-without-getting-stuck-in-an-error-state-such-as-user-is-already-authenticated-and-without-requiring-manual-refreshes",
+      "title": "Investigate and fix the current Internet Identity login flow so that users can reliably sign in and sign out without getting stuck in an error state such as \"User is already authenticated\" and without requiring manual refreshes.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-separate-entry-points-for-buyers-and-sellers-in-the-ui-while-continuing-to-use-internet-identity-for-authentication-buyers-should-be-directed-to-the-storefront-account-experience-sellers-should-be-directed-to-the-seller-admin-dashboard-experience-when-they-have-admin-access",
+      "title": "Add separate entry points for buyers and sellers in the UI, while continuing to use Internet Identity for authentication: buyers should be directed to the storefront/account experience; sellers should be directed to the seller/admin dashboard experience when they have admin access.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-founder-login-recognition-flow-for-the-founder-email-mercutiose369-gmail-com-so-that-when-the-signed-in-user-provides-this-email-the-ui-recognizes-them-as-the-founder-and-grants-them-the-highest-available-access-level-within-the-app-s-existing-role-system",
+      "title": "Implement a founder login recognition flow for the founder email \"mercutiose369@gmail.com\" so that when the signed-in user provides this email, the UI recognizes them as the founder and grants them the highest available access level within the app's existing role system.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-in-app-deploy-or-publishing-option-that-clarifies-the-current-deployment-behavior-and-provides-a-user-facing-way-to-access-the-live-app-url-without-requiring-unsupported-manual-deployments",
+      "title": "Add an in-app 'Deploy' or 'Publishing' option that clarifies the current deployment behavior and provides a user-facing way to access the live app URL, without requiring unsupported manual deployments.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -84,6 +196,58 @@
       "summary": "Seed the app with a small set of demo printed T‑shirt products (including multiple sizes/colors) so the storefront is usable immediately after deployment.",
       "reqIds": [
         "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Add admin controls to customize app branding/settings (change marketplace/app name and upload/use own logo).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Implement a referral code system (generate/apply referral codes and track referrals) for users/marketing.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Add role-based access/admin permissions to grant 'full access' capabilities such as product management and app settings.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Extend the backend marketplace settings model and APIs to support a subtitle/tagline field in addition to display name and logo, including an admin-protected method to update the subtitle/tagline.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Update checkout/order form to collect email, phone number, and shipping address when buying a product, and allow entering an optional referral code.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Support a predefined list of referral/promo codes that apply a 50% discount to the current order when entered at checkout.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Implement separate login/access paths for sellers vs customers, plus a special founder login recognized by email (mercutiose369@gmail.com).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Extend the backend order model and order creation API to support: (1) storing the buyer email as part of order shipping/contact data and (2) optionally accepting a promo code for one-time discounting during order creation.",
+      "reqIds": [
+        "REQ-20"
       ],
       "status": "pending"
     }

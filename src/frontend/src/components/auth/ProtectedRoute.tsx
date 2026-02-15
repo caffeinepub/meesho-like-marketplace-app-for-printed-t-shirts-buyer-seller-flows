@@ -12,7 +12,7 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
   const { identity, isInitializing } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
-  const { data: isAdmin, isLoading: adminLoading } = useIsCallerAdmin();
+  const { data: isAdmin, isLoading: adminLoading, isFetched: adminFetched } = useIsCallerAdmin();
 
   const isAuthenticated = !!identity;
 
@@ -30,8 +30,8 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
     return <AccessDeniedScreen />;
   }
 
-  // Check admin requirement
-  if (requireAdmin && !isAdmin) {
+  // Check admin requirement with proper fetched state
+  if (requireAdmin && adminFetched && !isAdmin) {
     return <AccessDeniedScreen />;
   }
 

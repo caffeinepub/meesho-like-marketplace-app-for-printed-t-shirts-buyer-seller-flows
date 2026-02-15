@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Package, ArrowLeft } from 'lucide-react';
+import { Loader2, Package, ArrowLeft, Mail, Phone, MapPin } from 'lucide-react';
 import { formatPrice } from '../utils/money';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import { OrderStatus } from '../backend';
@@ -111,30 +111,66 @@ function OrderDetailPageContent() {
           </CardContent>
         </Card>
 
+        {/* Contact Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Contact Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-muted-foreground" />
+              <span>{order.contactInfo.email}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              <span>{order.contactInfo.shippingAddress.phone}</span>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Shipping Address */}
         <Card>
           <CardHeader>
-            <CardTitle>Shipping Address</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              Shipping Address
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-1 text-sm">
-            <p className="font-medium">{order.shippingAddress.fullName}</p>
-            <p className="text-muted-foreground">{order.shippingAddress.phone}</p>
-            <p className="text-muted-foreground">{order.shippingAddress.addressLine1}</p>
-            {order.shippingAddress.addressLine2 && (
-              <p className="text-muted-foreground">{order.shippingAddress.addressLine2}</p>
+            <p className="font-medium">{order.contactInfo.shippingAddress.fullName}</p>
+            <p className="text-muted-foreground">{order.contactInfo.shippingAddress.addressLine1}</p>
+            {order.contactInfo.shippingAddress.addressLine2 && (
+              <p className="text-muted-foreground">{order.contactInfo.shippingAddress.addressLine2}</p>
             )}
             <p className="text-muted-foreground">
-              {order.shippingAddress.city}, {order.shippingAddress.zip}
+              {order.contactInfo.shippingAddress.city}, {order.contactInfo.shippingAddress.zip}
             </p>
           </CardContent>
         </Card>
 
+        {/* Promo Code Applied */}
+        {order.promoApplied && order.promoCode && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Promo Code Applied</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Badge variant="secondary" className="text-sm">
+                {order.promoCode} - 50% off
+              </Badge>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Order Total */}
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-center text-lg font-bold">
+          <CardHeader>
+            <CardTitle>Order Total</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-between text-2xl font-bold">
               <span>Total</span>
-              <span className="text-primary text-2xl">{formatPrice(order.totalCents)}</span>
+              <span className="text-primary">{formatPrice(order.totalCents)}</span>
             </div>
           </CardContent>
         </Card>

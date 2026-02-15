@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { ShoppingCart, Search, User, Package, LayoutDashboard } from 'lucide-react';
+import { ShoppingCart, Search, User, Package, LayoutDashboard, UserCircle, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +13,7 @@ import {
 import LoginButton from '../auth/LoginButton';
 import { useCart } from '../../cart/CartContext';
 import { useGetCallerUserProfile, useIsCallerAdmin } from '../../hooks/useCurrentUser';
+import { useGetMarketplaceSettings } from '../../hooks/useMarketplaceSettings';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import { useState } from 'react';
 
@@ -22,10 +23,15 @@ export default function Header() {
   const { identity } = useInternetIdentity();
   const { data: userProfile } = useGetCallerUserProfile();
   const { data: isAdmin } = useIsCallerAdmin();
+  const { data: marketplaceSettings } = useGetMarketplaceSettings();
   const [searchQuery, setSearchQuery] = useState('');
 
   const isAuthenticated = !!identity;
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const displayName = marketplaceSettings?.displayName || 'AMERICAN PRINTERS';
+  const tagline = marketplaceSettings?.tagline || 'Unique printers, legend stop.';
+  const logoUrl = marketplaceSettings?.logo?.getDirectURL() || '/assets/generated/american-printers-logo.dim_512x512.png';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,11 +45,16 @@ export default function Header() {
       <div className="container-custom">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src="/assets/generated/logo.dim_512x512.png" alt="Logo" className="h-10 w-10" />
-            <span className="hidden font-bold text-xl sm:inline-block bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              TeeMarket
-            </span>
+          <Link to="/" className="flex items-center gap-3 shrink-0">
+            <img src={logoUrl} alt="Logo" className="h-10 w-10" />
+            <div className="hidden sm:flex flex-col">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent leading-tight">
+                {displayName}
+              </span>
+              <span className="text-xs text-muted-foreground leading-tight">
+                {tagline}
+              </span>
+            </div>
           </Link>
 
           {/* Search */}
@@ -90,6 +101,10 @@ export default function Header() {
                     {userProfile?.name || 'User'}
                   </div>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate({ to: '/account' })}>
+                    <UserCircle className="mr-2 h-4 w-4" />
+                    My Account
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate({ to: '/orders' })}>
                     <Package className="mr-2 h-4 w-4" />
                     My Orders
@@ -109,7 +124,14 @@ export default function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <LoginButton />
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => navigate({ to: '/auth' })}
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Sign In
+              </Button>
             )}
           </div>
         </div>

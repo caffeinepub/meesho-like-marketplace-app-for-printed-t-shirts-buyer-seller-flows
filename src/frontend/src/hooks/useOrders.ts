@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { Order, OrderId, OrderItem, ShippingAddress } from '../backend';
+import type { Order, OrderId, OrderItem, ContactInfo } from '../backend';
 
 interface CreateOrderInput {
   items: OrderItem[];
-  shippingAddress: ShippingAddress;
+  contactInfo: ContactInfo;
+  promoCode?: string | null;
 }
 
 export function useCreateOrder() {
@@ -14,7 +15,11 @@ export function useCreateOrder() {
   return useMutation({
     mutationFn: async (input: CreateOrderInput) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.createOrder(input.items, input.shippingAddress);
+      return actor.createOrder(
+        input.items,
+        input.contactInfo,
+        input.promoCode || null
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myOrders'] });

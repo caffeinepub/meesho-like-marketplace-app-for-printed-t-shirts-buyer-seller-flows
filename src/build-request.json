@@ -1,194 +1,155 @@
 {
   "kind": "build_request",
-  "title": "Meesho-like marketplace app for printed T‑shirts (buyer + seller flows)",
+  "title": "Add email + optional promo code discount at checkout, fix login flow, and add separate buyer/seller/founder entry points",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Create a cohesive Meesho-inspired marketplace UX for a printed T‑shirt business, with a consistent visual theme (colors, typography, spacing, components) applied across all pages.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "So create a app like meesho"
-        ]
-      },
-      "acceptanceCriteria": [
-        "App UI uses a single consistent design system (colors/type/spacing) across pages.",
-        "No user-facing text is left as placeholder lorem ipsum; all user-facing text is in English."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Implement Internet Identity authentication and show signed-in user context in the UI (signed-out state, sign-in button, sign-out control).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "So create a app like meesho"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A signed-out user can sign in using Internet Identity.",
-        "A signed-in user can sign out and returns to signed-out state.",
-        "UI clearly indicates whether the user is signed in."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Build the buyer storefront flow: product listing page with search and filters (at minimum: price range and size), product detail page (images, description, sizes/colors, price), and add-to-cart functionality with cart page and quantity updates.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1",
-          "msg-2"
-        ],
-        "quotes": [
-          "I wana make a business of printed t shirts",
-          "So create a app like meesho"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Users can browse a grid/list of T‑shirt products.",
-        "Search filters visible products by keyword.",
-        "Filters can narrow products by price range and size.",
-        "Product detail page shows all key product information and allows selecting size/color (when available).",
-        "Cart persists within the session and supports add/remove/update quantity.",
-        "Cart shows item totals and overall total."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Build a simple checkout flow that creates an order (no external payments): collect shipping details (name, phone, address), confirm order summary, and submit the order to the backend.",
+      "id": "REQ-18",
+      "text": "Update the checkout form to collect an email address in addition to the existing required fields (full name, phone number, and shipping address).",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-1"
         ],
         "quotes": [
-          "So create a app like meesho"
+          "When anyone click on any product and buy it then ask. Email ,phone number , address, these are main to order."
         ]
       },
       "acceptanceCriteria": [
-        "Checkout form validates required fields before submission.",
-        "Submitting checkout creates an order record in the backend tied to the signed-in user.",
-        "After successful submission, user sees an order confirmation page with an order ID and summary."
+        "Checkout page shows a required Email field with clear validation messaging in English.",
+        "When an order is placed, the submitted order payload includes the email value.",
+        "Order confirmation and order detail views display the email value (or clearly show it as part of the shipping/contact information)."
       ]
     },
     {
-      "id": "REQ-5",
-      "text": "Add buyer order history: a page where signed-in users can view their orders and status (e.g., Placed, Confirmed, Shipped, Delivered, Cancelled) and open an order detail view.",
+      "id": "REQ-19",
+      "text": "Add an optional promo/referral code input to checkout and apply a 50% discount to the current order total when the entered code matches one of the predefined codes: X7P9K2Q4, L3M8Z1T6, R5V2N9C7, B8Q4Y6W1, T2H7J5K9, P9D3F8L2, Z4X6C1V8, N7M2A5S9, K1R8E4T3, W6Y9U2I5, C3B7N1M8, J8L4P6Q2.",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-1"
         ],
         "quotes": [
-          "So create a app like meesho"
+          "And also ask referral code, this is optional when any one add X7P9K2Q4\nL3M8Z1T6\nR5V2N9C7\nB8Q4Y6W1\nT2H7J5K9\nP9D3F8L2\nZ4X6C1V8\nN7M2A5S9\nK1R8E4T3\nW6Y9U2I5\nC3B7N1M8\nJ8L4P6Q2 these referral code give them 50% off on that order."
         ]
       },
       "acceptanceCriteria": [
-        "Signed-in users can view a list of their orders.",
-        "Each order displays status and total.",
-        "Selecting an order shows order items, shipping details, timestamps (if stored), and current status."
+        "Checkout page includes an optional field labeled in English (e.g., \"Promo code (optional)\").",
+        "If the code matches the allowlist, the order summary clearly shows the discount amount and the final total (50% off the pre-discount total).",
+        "If the code is invalid, the UI shows a clear English error and no discount is applied.",
+        "The backend computes and stores the discounted order total so that refreshing the UI or viewing order history does not lose the discount.",
+        "If no code is provided, totals match the current behavior (no discount)."
       ]
     },
     {
-      "id": "REQ-6",
-      "text": "Implement backend marketplace data model and APIs in the single Motoko actor to support: product catalog CRUD (for sellers/admin), product listing with basic query parameters (search, filters), cart-independent order creation, and per-user order retrieval.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-1",
-          "msg-2"
-        ],
-        "quotes": [
-          "I wana make a business of printed t shirts",
-          "So create a app like meesho"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend stores products and orders in stable state so data persists across upgrades.",
-        "Backend exposes methods to: list products, get product by ID, create/update/delete product (restricted), create order, list orders for caller, get order by ID (restricted to owner/admin).",
-        "Product listing supports at least keyword search and filter parameters used by the frontend."
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Add a seller/admin dashboard UI to manage products: create product (title, description, price, sizes, colors, images), edit product, delete product, and view a list of existing products.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "So create a app like meesho"
-        ]
-      },
-      "acceptanceCriteria": [
-        "There is a protected dashboard area accessible only to authorized principals (admin/seller).",
-        "Authorized users can create, edit, and delete products, and changes are reflected in the buyer storefront.",
-        "Unauthorized users cannot access backend product management methods."
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Seed the app with a small set of demo printed T‑shirt products (including multiple sizes/colors) so the storefront is usable immediately after deployment.",
+      "id": "REQ-20",
+      "text": "Extend the backend order model and order creation API to support: (1) storing the buyer email as part of order shipping/contact data and (2) optionally accepting a promo code for one-time discounting during order creation.",
       "target": "backend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "I wana make a business of printed t shirts"
+          "Email ,phone number , address, these are main to order.",
+          "these referral code give them 50% off on that order."
         ]
       },
       "acceptanceCriteria": [
-        "On a fresh deployment, the storefront shows multiple sample products without requiring manual product entry first.",
-        "Seed data includes at least 6 products with varied prices and at least 2 sizes per product."
+        "Backend canister compiles and deploys with the updated order types.",
+        "Creating an order with an allowed promo code results in totalCents reflecting the 50% discount.",
+        "Creating an order with no promo code results in totalCents equaling the full amount.",
+        "Orders returned by getOrder/getMyOrders include the stored email value."
       ]
     },
     {
-      "id": "REQ-9",
-      "text": "Generate and add required static images to the app and render them from frontend/public/assets/generated (not via backend).",
+      "id": "REQ-21",
+      "text": "Investigate and fix the current Internet Identity login flow so that users can reliably sign in and sign out without getting stuck in an error state such as \"User is already authenticated\" and without requiring manual refreshes.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "And also login process is not working Chek it."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Clicking the Login button reliably completes login and updates the UI to the signed-in state.",
+        "Clicking Logout reliably clears the identity and updates the UI to the signed-out state.",
+        "If a user is already authenticated, clicking Login does not leave the app in a broken state; it should recover gracefully and end in a signed-in state.",
+        "All login/logout user-facing messages shown in the UI are in English."
+      ]
+    },
+    {
+      "id": "REQ-22",
+      "text": "Add separate entry points for buyers and sellers in the UI, while continuing to use Internet Identity for authentication: buyers should be directed to the storefront/account experience; sellers should be directed to the seller/admin dashboard experience when they have admin access.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "And give a separate login system for sellers and customers."
+        ]
+      },
+      "acceptanceCriteria": [
+        "The UI provides two clear options in English (e.g., \"Customer Login\" and \"Seller Login\").",
+        "Both options authenticate via Internet Identity (no email/password login is introduced).",
+        "After login via Seller Login: if the user has admin access, they are navigated to /admin; if not, they see an English access-denied message with a way back to the storefront.",
+        "After login via Customer Login: the user is navigated to the storefront (/) or their intended buyer flow."
+      ]
+    },
+    {
+      "id": "REQ-23",
+      "text": "Implement a founder login recognition flow for the founder email \"mercutiose369@gmail.com\" so that when the signed-in user provides this email, the UI recognizes them as the founder and grants them the highest available access level within the app's existing role system.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "And also for me the founder. Login as founder when they login with mercutiose369@gmail.com,"
+        ]
+      },
+      "acceptanceCriteria": [
+        "There is a clear English UI path for \"Founder Login\" (or an equivalent founder verification step after login).",
+        "The founder email value used for matching is exactly \"mercutiose369@gmail.com\".",
+        "After successful founder recognition, the user has admin-level access in the app (e.g., can access /admin without AccessDenied).",
+        "If a non-matching email is provided, the user is not granted founder/admin access and receives a clear English error message."
+      ]
+    },
+    {
+      "id": "REQ-24",
+      "text": "Add an in-app 'Deploy' or 'Publishing' option that clarifies the current deployment behavior and provides a user-facing way to access the live app URL, without requiring unsupported manual deployments.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-2"
         ],
         "quotes": [
-          "So create a app like meesho"
+          "Give deploy option to this"
         ]
       },
       "acceptanceCriteria": [
-        "All required generated images exist under frontend/public/assets/generated.",
-        "Frontend references these images as static assets (e.g., in header/hero/empty states) without calling the backend to fetch them."
+        "Admin UI includes a \"Deploy\" or \"Publishing\" section/tab/page with English explanatory text stating updates deploy automatically after changes.",
+        "The section provides a convenient action such as \"Copy live app link\" (or equivalent) that works in the browser.",
+        "No UI claims to perform an on-demand deployment if the platform cannot actually do so."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
-    "Do not add external databases or third-party auth providers; use Internet Identity only.",
-    "Do not modify files under frontend/src/components/ui or other immutablePaths; compose existing UI components instead.",
-    "No real-time features (no WebSockets/push notifications)."
+    "Use English for all user-facing text added or modified.",
+    "Backend must remain a single Motoko actor in backend/main.mo; do not introduce additional backend services.",
+    "Do not edit files under frontend immutablePaths (frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui/*); compose or wrap behavior elsewhere.",
+    "Authentication must remain Internet Identity-based; do not add third-party auth or email/password authentication."
   ],
   "nonGoals": [
-    "Integrating real payment providers (Stripe/UPI/cards) or external checkout.",
-    "Shipping carrier integrations, live tracking, label generation, or address validation APIs.",
-    "Social/reseller referral network features (commissions, invite trees) beyond basic buyer/seller flows.",
-    "Native mobile apps (iOS/Android) or React Native implementation."
+    "Implementing real manual/on-demand deployments from inside the app (only provide a deploy/publishing UI that reflects actual platform behavior).",
+    "Integrating external email delivery/verification or OTP flows.",
+    "Adding WebSockets, push notifications, or any real-time messaging."
   ],
   "imageRequirements": {
-    "required": [
-      "Marketplace logo mark + wordmark (logo.dim_512x512.png)",
-      "Homepage hero banner featuring printed T‑shirts laid out in a clean marketplace style (hero-banner.dim_1600x600.png)",
-      "Empty-state illustration with shopping bag and T‑shirt motif (empty-state.dim_1200x800.png)",
-      "Neutral product placeholder image with T‑shirt silhouette (product-placeholder.dim_800x800.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

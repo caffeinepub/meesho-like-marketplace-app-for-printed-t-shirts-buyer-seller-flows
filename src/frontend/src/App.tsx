@@ -9,8 +9,10 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import AccountPage from './pages/AccountPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import ProductEditorPage from './pages/admin/ProductEditorPage';
+import AuthEntryPage from './pages/AuthEntryPage';
 import { CartProvider } from './cart/CartContext';
 
 const rootRoute = createRootRoute({
@@ -21,6 +23,12 @@ const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: StorefrontPage
+});
+
+const authRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/auth',
+  component: AuthEntryPage
 });
 
 const productDetailRoute = createRoute({
@@ -59,6 +67,12 @@ const orderDetailRoute = createRoute({
   component: OrderDetailPage
 });
 
+const accountRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/account',
+  component: AccountPage
+});
+
 const adminDashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin',
@@ -79,12 +93,14 @@ const adminProductEditRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  authRoute,
   productDetailRoute,
   cartRoute,
   checkoutRoute,
   orderConfirmationRoute,
   ordersRoute,
   orderDetailRoute,
+  accountRoute,
   adminDashboardRoute,
   adminProductEditorRoute,
   adminProductEditRoute

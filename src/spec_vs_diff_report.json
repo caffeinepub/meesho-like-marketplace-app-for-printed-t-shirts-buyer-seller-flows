@@ -1,157 +1,79 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T05:44:41.498Z",
-  "summary": "Diff adds a Motoko backend actor with product/order/user-profile types and admin-restricted product CRUD, plus a new TanStack Router-based frontend with cart context, auth (Internet Identity) hooks/components, admin dashboard routes, and a themed UI. However, several BuildRequest requirements are not evidenced in the provided diff summary (notably stable persistence/seeding, storefront filtering, and required generated static images), and a few unrequested features/branding appear to be added (profile setup, secret admin token bootstrap, caffeine.ai footer link).",
+  "generatedAt": "2026-02-15T06:34:39.770Z",
+  "summary": "Diff implements the new /auth entry page with Customer/Seller/Founder paths, improves II login/logout handling, adds checkout email + promo code UI logic, and updates order/contact types to include email and promo fields. However, the diff summary does not provide evidence that the backend actually (a) applies/stores the 50% promo discount in totalCents, (b) exposes the updated createOrder signature and returns the stored promo/email reliably, or (c) supports founder recognition via an isFounderEmail API. Evidence for the required Admin 'Deploy/Publishing' explanatory section and live-link copy action is also inconclusive due to truncation.",
   "missing_requirements": [
     {
-      "id": "REQ-3",
-      "requirement": "Storefront product listing supports search and filters (at minimum: price range and size) and filters narrow visible products accordingly.",
-      "reason": "Header shows a search box that navigates with a query parameter, but there is no evidence of UI controls or logic for price range and size filters in the provided diff excerpts, nor evidence that listing API supports these parameters.",
+      "id": "REQ-19",
+      "requirement": "Backend computes and stores the discounted order total (50% off) when an allowlisted promo code is provided, so order history/refresh preserves the discount.",
+      "reason": "Frontend calculates and displays discount client-side and passes promoCode to createOrder, but the diff summary does not show backend logic that validates allowlisted codes and persists discounted totalCents (or any allowlist enforcement) during order creation.",
       "evidence": [
-        "frontend/src/components/layout/Header.tsx (search only)",
-        "frontend/src/hooks/useProducts.ts (getAllProducts without query params)"
+        "frontend/src/pages/CheckoutPage.tsx",
+        "frontend/src/utils/promoCodes.ts",
+        "backend/main.mo (truncated)"
       ]
     },
     {
-      "id": "REQ-4",
-      "requirement": "Checkout flow collects shipping details, validates required fields, confirms order summary, submits order to backend, and shows confirmation page with order ID and summary.",
-      "reason": "Routes/pages exist for checkout and order confirmation, and a createOrder hook exists, but no evidence is shown for the checkout form UI, validation, order-summary confirmation step, or the confirmation page rendering order ID/summary.",
+      "id": "REQ-20",
+      "requirement": "Extend backend order creation API to accept contact email + optional promo code and compute discounted totalCents; ensure getOrder/getMyOrders include stored email.",
+      "reason": "Order types were extended to include contactInfo.email and promoCode/promoApplied, but the diff summary is truncated before showing createOrder implementation/signature changes and discount computation; cannot confirm API behavior or compilation success from the summary alone.",
       "evidence": [
-        "frontend/src/App.tsx (CheckoutPage, OrderConfirmationPage routes)",
-        "frontend/src/hooks/useOrders.ts (useCreateOrder)"
+        "backend/main.mo (truncated)",
+        "backend/migration.mo (truncated)",
+        "frontend/src/hooks/useOrders.ts"
       ]
     },
     {
-      "id": "REQ-5",
-      "requirement": "Buyer order history page listing orders with status/total and an order detail view showing items, shipping details, timestamps (if stored), and status.",
-      "reason": "Orders routes/pages and hooks exist, but no evidence is shown that the UI renders statuses/totals or that the detail page shows shipping details/timestamps/status.",
+      "id": "REQ-23",
+      "requirement": "Founder login recognition for email \"mercutiose369@gmail.com\" that grants highest access level (admin) within the existing role system.",
+      "reason": "Frontend calls actor.isFounderEmail(email) and then expects admin status to change, but the diff summary does not show any backend method isFounderEmail nor any backend role elevation tied to founder email verification.",
       "evidence": [
-        "frontend/src/App.tsx (OrdersPage, OrderDetailPage routes)",
-        "frontend/src/hooks/useOrders.ts (useGetMyOrders, useGetOrder)"
+        "frontend/src/hooks/useFounderAccess.ts",
+        "backend/main.mo (truncated)"
       ]
     },
     {
-      "id": "REQ-6",
-      "requirement": "Backend stores products and orders in stable state so data persists across upgrades.",
-      "reason": "backend/main.mo shows in-memory Maps and counters, but the truncated excerpt does not show any `stable` variables or preupgrade/postupgrade logic; cannot confirm persistence across upgrades.",
+      "id": "REQ-24",
+      "requirement": "Admin UI includes a 'Deploy' or 'Publishing' section with English explanatory text that updates deploy automatically, plus a working 'Copy live app link' (or equivalent) action; no claim of on-demand deployment.",
+      "reason": "AdminDashboardPage diff is truncated; while there are hints (linkCopied state, Copy/Rocket icons), the summary does not show the actual Deploy/Publishing section, explanatory text, or a clipboard copy implementation and wording constraints.",
       "evidence": [
-        "backend/main.mo (products/orders maps and next IDs shown; no stable state visible in excerpt)"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "requirement": "Backend exposes listing API with keyword search and filter parameters used by the frontend (at least keyword search + price range + size filters).",
-      "reason": "Frontend hook `getAllProducts()` calls `actor.getAllProducts()` with no query params; backend excerpt doesn’t show any list method that accepts search/filter parameters.",
-      "evidence": [
-        "frontend/src/hooks/useProducts.ts (getAllProducts without params)",
-        "backend/main.mo (excerpt does not show product listing with query parameters)"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "requirement": "Backend exposes required methods: list products, get product by ID, create/update/delete product (restricted), create order, list orders for caller, get order by ID (restricted to owner/admin).",
-      "reason": "Create/update product are present in the excerpt, but delete/list/get product and order APIs are not visible due to truncation; cannot confirm all required methods or access restrictions for order retrieval.",
-      "evidence": [
-        "backend/main.mo (createProduct/updateProduct shown; other methods not visible in excerpt)"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "requirement": "Seller/admin dashboard supports create/edit/delete products including fields: title, description, price, sizes, colors, images.",
-      "reason": "Admin dashboard list/delete UI is shown, and routing to editor exists, but the product editor form implementation is not included in the provided diff excerpt; cannot confirm all required fields and create/edit flows.",
-      "evidence": [
-        "frontend/src/App.tsx (ProductEditorPage routes)",
-        "frontend/src/pages/admin/AdminDashboardPage.tsx (list/delete; editor truncated/not shown)"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "requirement": "Seed the app with at least 6 demo printed T-shirt products (varied prices, at least 2 sizes per product) on fresh deployment.",
-      "reason": "No evidence of seeding logic or initial product population is shown in backend/main.mo excerpt.",
-      "evidence": [
-        "backend/main.mo (no seed data visible in excerpt)"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "requirement": "All required generated static images exist under frontend/public/assets/generated and are referenced by the frontend as static assets.",
-      "reason": "Header references `logo.dim_512x512.png`, but the diff summary does not show the generated image files under `frontend/public/assets/generated`, nor references to the hero banner, empty-state illustration, or product placeholder assets.",
-      "evidence": [
-        "frontend/src/components/layout/Header.tsx (references /assets/generated/logo.dim_512x512.png)"
+        "frontend/src/pages/admin/AdminDashboardPage.tsx (truncated)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "User profile setup flow (save/get profile) and a mandatory name-collection dialog.",
-      "reason": "BuildRequest does not mention user profiles or onboarding dialogs; diff adds backend profile APIs and a ProfileSetupDialog component.",
+      "description": "Profile setup dialog requiring users to enter name/email/phone on first login and backend user profile model extended with email/phone/address.",
+      "reason": "BuildRequest did not ask for a mandatory user profile onboarding flow or expanding/storing user profile contact fields beyond checkout email collection and founder recognition.",
       "evidence": [
-        "backend/main.mo (UserProfile types + get/save profile methods)",
         "frontend/src/components/auth/ProfileSetupDialog.tsx",
-        "frontend/src/hooks/useCurrentUser.ts"
-      ]
-    },
-    {
-      "description": "Access-control bootstrap via secret URL parameter `caffeineAdminToken` and `_initializeAccessControlWithSecret` call.",
-      "reason": "BuildRequest requires Internet Identity only but does not request a secret-token based admin initialization mechanism or URL-param based privilege bootstrap.",
-      "evidence": [
-        "frontend/src/hooks/useActor.ts (getSecretParameter('caffeineAdminToken'), calls actor._initializeAccessControlWithSecret)"
-      ]
-    },
-    {
-      "description": "Caffeine.ai promotional footer link and attribution.",
-      "reason": "Not requested; BuildRequest does not mention adding external promotional links/branding.",
-      "evidence": [
-        "frontend/src/components/layout/Footer.tsx (caffeine.ai link with UTM params)"
-      ]
-    },
-    {
-      "description": "Theme toggling infrastructure via `next-themes` ThemeProvider.",
-      "reason": "Not explicitly requested (REQ-1 only asks for a cohesive theme); adding theme-system support is extra functionality beyond stated requirements.",
-      "evidence": [
-        "frontend/src/App.tsx (ThemeProvider from next-themes)"
+        "backend/main.mo (truncated)",
+        "backend/migration.mo (truncated)"
       ]
     }
   ],
-  "confidence": 0.64,
+  "confidence": 0.63,
   "changed_files": [
-    "all_files_summary.json",
     "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.css",
-    "frontend/index.html",
     "frontend/src/App.tsx",
-    "frontend/src/cart/CartContext.tsx",
-    "frontend/src/cart/cartTypes.ts",
     "frontend/src/components/auth/AccessDeniedScreen.tsx",
     "frontend/src/components/auth/LoginButton.tsx",
     "frontend/src/components/auth/ProfileSetupDialog.tsx",
     "frontend/src/components/auth/ProtectedRoute.tsx",
-    "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/components/layout/Footer.tsx",
     "frontend/src/components/layout/Header.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useAdminProducts.ts",
-    "frontend/src/hooks/useCurrentUser.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useAuthActions.ts",
+    "frontend/src/hooks/useFounderAccess.ts",
     "frontend/src/hooks/useOrders.ts",
-    "frontend/src/hooks/useProducts.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/CartPage.tsx",
+    "frontend/src/pages/AuthEntryPage.tsx",
     "frontend/src/pages/CheckoutPage.tsx",
     "frontend/src/pages/OrderConfirmationPage.tsx",
     "frontend/src/pages/OrderDetailPage.tsx",
     "frontend/src/pages/OrdersPage.tsx",
-    "frontend/src/pages/ProductDetailPage.tsx",
-    "frontend/src/pages/StorefrontPage.tsx",
     "frontend/src/pages/admin/AdminDashboardPage.tsx",
-    "frontend/src/pages/admin/ProductEditorPage.tsx",
-    "frontend/src/utils/images.ts",
-    "frontend/src/utils/money.ts",
-    "frontend/src/utils/urlParams.ts",
-    "frontend/tailwind.config.js",
+    "frontend/src/utils/promoCodes.ts",
     "project_state.json"
   ]
 }

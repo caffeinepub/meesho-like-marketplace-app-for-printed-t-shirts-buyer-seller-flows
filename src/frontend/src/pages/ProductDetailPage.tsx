@@ -7,7 +7,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Loader2, ShoppingCart, ArrowLeft } from 'lucide-react';
 import { formatPrice } from '../utils/money';
-import { blobToImageUrl } from '../utils/images';
 import { useCart } from '../cart/CartContext';
 import { toast } from 'sonner';
 import ProfileSetupDialog from '../components/auth/ProfileSetupDialog';
@@ -49,7 +48,7 @@ export default function ProductDetailPage() {
       size: selectedSize,
       color: selectedColor,
       quantity,
-      imageBlob: product.imageBlob
+      imageUrl: product.imageRef.getDirectURL()
     });
 
     toast.success('Added to cart!');
@@ -88,7 +87,7 @@ export default function ProductDetailPage() {
           {/* Product Image */}
           <div className="aspect-square overflow-hidden rounded-lg bg-muted">
             <img
-              src={blobToImageUrl(product.imageBlob)}
+              src={product.imageRef.getDirectURL()}
               alt={product.title}
               className="w-full h-full object-cover"
             />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useGetProduct } from '../../hooks/useProducts';
 import { useCreateProduct, useUpdateProduct } from '../../hooks/useAdminProducts';
 import { Button } from '@/components/ui/button';
@@ -7,113 +7,135 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, ArrowLeft, Upload, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, X, Upload } from 'lucide-react';
 import { toast } from 'sonner';
-import { fileToUint8Array, blobToImageUrl } from '../../utils/images';
 import ProtectedRoute from '../../components/auth/ProtectedRoute';
+import { fileToUint8Array } from '../../utils/images';
+import { ExternalBlob } from '../../backend';
 
 function ProductEditorPageContent() {
-  const { productId } = useParams({ strict: false }) as { productId?: string };
   const navigate = useNavigate();
-  const isEditMode = !!productId;
+  const params = useParams({ strict: false });
+  const productId = params.productId ? Number(params.productId) : undefined;
+  const isEditMode = productId !== undefined;
 
-  const { data: existingProduct, isLoading: loadingProduct } = useGetProduct(
-    isEditMode ? Number(productId) : undefined!
-  );
+  const { data: existingProduct, isLoading: loadingProduct } = useGetProduct(productId!);
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
 
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    price: '',
-    sizes: '',
-    colors: '',
-    imageFile: null as File | null,
-    imageBlob: null as Uint8Array | null
-  });
-
-  const [imagePreview, setImagePreview] = useState<string>('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [sizes, setSizes] = useState<string[]>([]);
+  const [colors, setColors] = useState<string[]>([]);
+  const [sizeInput, setSizeInput] = useState('');
+  const [colorInput, setColorInput] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (existingProduct) {
-      setFormData({
-        title: existingProduct.title,
-        description: existingProduct.description,
-        price: String(Number(existingProduct.priceCents) / 100),
-        sizes: existingProduct.sizes.join(', '),
-        colors: existingProduct.colors.join(', '),
-        imageFile: null,
-        imageBlob: existingProduct.imageBlob
-      });
-      setImagePreview(blobToImageUrl(existingProduct.imageBlob));
+      setTitle(existingProduct.title);
+      setDescription(existingProduct.description);
+      setPrice((Number(existingProduct.priceCents) / 100).toFixed(2));
+      setSizes(existingProduct.sizes);
+      setColors(existingProduct.colors);
+      setImagePreview(existingProduct.imageRef.getDirectURL());
     }
   }, [existingProduct]);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image must be less than 5MB');
+        return;
+      }
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
+  };
 
-    try {
-      const blob = await fileToUint8Array(file);
-      setFormData({ ...formData, imageFile: file, imageBlob: blob });
-      setImagePreview(URL.createObjectURL(file));
-    } catch (error) {
-      console.error('Image processing error:', error);
-      toast.error('Failed to process image');
+  const addSize = () => {
+    if (sizeInput.trim() && !sizes.includes(sizeInput.trim())) {
+      setSizes([...sizes, sizeInput.trim()]);
+      setSizeInput('');
     }
+  };
+
+  const removeSize = (size: string) => {
+    setSizes(sizes.filter((s) => s !== size));
+  };
+
+  const addColor = () => {
+    if (colorInput.trim() && !colors.includes(colorInput.trim())) {
+      setColors([...colors, colorInput.trim()]);
+      setColorInput('');
+    }
+  };
+
+  const removeColor = (color: string) => {
+    setColors(colors.filter((c) => c !== color));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.imageBlob) {
-      toast.error('Please select an image');
+    if (!title.trim() || !description.trim() || !price || sizes.length === 0 || colors.length === 0) {
+      toast.error('Please fill in all required fields');
       return;
     }
 
-    const priceCents = Math.round(parseFloat(formData.price) * 100);
-    const sizes = formData.sizes.split(',').map((s) => s.trim()).filter(Boolean);
-    const colors = formData.colors.split(',').map((c) => c.trim()).filter(Boolean);
-
-    if (sizes.length === 0) {
-      toast.error('Please add at least one size');
-      return;
-    }
-
-    if (colors.length === 0) {
-      toast.error('Please add at least one color');
+    if (!imageFile && !isEditMode) {
+      toast.error('Please select a product image');
       return;
     }
 
     try {
-      if (isEditMode) {
+      const priceCents = BigInt(Math.round(parseFloat(price) * 100));
+      let imageData: Uint8Array;
+
+      if (imageFile) {
+        imageData = await fileToUint8Array(imageFile);
+      } else if (existingProduct) {
+        imageData = await existingProduct.imageRef.getBytes();
+      } else {
+        toast.error('No image available');
+        return;
+      }
+
+      if (isEditMode && productId) {
         await updateProduct.mutateAsync({
-          productId: Number(productId),
-          title: formData.title,
-          description: formData.description,
-          priceCents: BigInt(priceCents),
+          productId,
+          title: title.trim(),
+          description: description.trim(),
+          priceCents,
           sizes,
           colors,
-          imageBlob: formData.imageBlob
+          imageBlob: imageData
         });
         toast.success('Product updated successfully');
       } else {
         await createProduct.mutateAsync({
-          title: formData.title,
-          description: formData.description,
-          priceCents: BigInt(priceCents),
+          title: title.trim(),
+          description: description.trim(),
+          priceCents,
           sizes,
           colors,
-          imageBlob: formData.imageBlob
+          imageBlob: imageData
         });
         toast.success('Product created successfully');
       }
+
       navigate({ to: '/admin' });
     } catch (error: any) {
       console.error('Save failed:', error);
@@ -131,159 +153,148 @@ function ProductEditorPageContent() {
 
   return (
     <div className="container-custom py-8">
-      <Button
-        variant="ghost"
-        className="mb-6"
-        onClick={() => navigate({ to: '/admin' })}
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Dashboard
-      </Button>
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>{isEditMode ? 'Edit Product' : 'Create New Product'}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title *</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Product title"
+                required
+              />
+            </div>
 
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">
-          {isEditMode ? 'Edit Product' : 'Create Product'}
-        </h1>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Product description"
+                rows={4}
+                required
+              />
+            </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Product Details</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Image Upload */}
-              <div className="space-y-2">
-                <Label>Product Image *</Label>
-                {imagePreview ? (
-                  <div className="relative aspect-square w-full max-w-sm mx-auto rounded-lg overflow-hidden bg-muted">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2"
-                      onClick={() => {
-                        setFormData({ ...formData, imageFile: null, imageBlob: null });
-                        setImagePreview('');
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="h-10 w-10 text-muted-foreground mb-3" />
-                      <p className="text-sm text-muted-foreground">
-                        Click to upload product image
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </label>
-                )}
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Price (₹) *</Label>
+              <Input
+                id="price"
+                type="number"
+                step="0.01"
+                min="0"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="0.00"
+                required
+              />
+            </div>
 
-              {/* Title */}
-              <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
-                <Input
-                  id="title"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g., Cool Graphic T-Shirt"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="image">Product Image *</Label>
+              <Input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              {imagePreview && (
+                <div className="mt-2">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full max-w-xs rounded-lg border"
+                  />
+                </div>
+              )}
+            </div>
 
-              {/* Description */}
-              <div className="space-y-2">
-                <Label htmlFor="description">Description *</Label>
-                <Textarea
-                  id="description"
-                  required
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Describe the product..."
-                  rows={4}
-                />
-              </div>
-
-              {/* Price */}
-              <div className="space-y-2">
-                <Label htmlFor="price">Price (₹) *</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  required
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  placeholder="499.00"
-                />
-              </div>
-
-              {/* Sizes */}
-              <div className="space-y-2">
-                <Label htmlFor="sizes">Sizes (comma-separated) *</Label>
+            <div className="space-y-2">
+              <Label htmlFor="sizes">Sizes *</Label>
+              <div className="flex gap-2">
                 <Input
                   id="sizes"
-                  required
-                  value={formData.sizes}
-                  onChange={(e) => setFormData({ ...formData, sizes: e.target.value })}
-                  placeholder="S, M, L, XL, XXL"
+                  value={sizeInput}
+                  onChange={(e) => setSizeInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSize())}
+                  placeholder="e.g., S, M, L, XL"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Enter sizes separated by commas
-                </p>
+                <Button type="button" onClick={addSize} variant="outline">
+                  Add
+                </Button>
               </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {sizes.map((size) => (
+                  <Badge key={size} variant="secondary" className="gap-1">
+                    {size}
+                    <X
+                      className="h-3 w-3 cursor-pointer"
+                      onClick={() => removeSize(size)}
+                    />
+                  </Badge>
+                ))}
+              </div>
+            </div>
 
-              {/* Colors */}
-              <div className="space-y-2">
-                <Label htmlFor="colors">Colors (comma-separated) *</Label>
+            <div className="space-y-2">
+              <Label htmlFor="colors">Colors *</Label>
+              <div className="flex gap-2">
                 <Input
                   id="colors"
-                  required
-                  value={formData.colors}
-                  onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
-                  placeholder="Black, White, Navy, Red"
+                  value={colorInput}
+                  onChange={(e) => setColorInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addColor())}
+                  placeholder="e.g., Red, Blue, Green"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Enter colors separated by commas
-                </p>
+                <Button type="button" onClick={addColor} variant="outline">
+                  Add
+                </Button>
               </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {colors.map((color) => (
+                  <Badge key={color} variant="secondary" className="gap-1">
+                    {color}
+                    <X
+                      className="h-3 w-3 cursor-pointer"
+                      onClick={() => removeColor(color)}
+                    />
+                  </Badge>
+                ))}
+              </div>
+            </div>
 
-              {/* Submit */}
+            <div className="flex gap-2 pt-4">
               <Button
                 type="submit"
-                className="w-full"
-                size="lg"
                 disabled={createProduct.isPending || updateProduct.isPending}
+                className="flex-1"
               >
-                {createProduct.isPending || updateProduct.isPending ? (
+                {(createProduct.isPending || updateProduct.isPending) ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Saving...
                   </>
-                ) : isEditMode ? (
-                  'Update Product'
                 ) : (
-                  'Create Product'
+                  <>{isEditMode ? 'Update Product' : 'Create Product'}</>
                 )}
               </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate({ to: '/admin' })}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

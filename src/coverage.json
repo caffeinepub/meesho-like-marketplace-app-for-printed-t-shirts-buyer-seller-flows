@@ -1,290 +1,147 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T05:44:41.500Z",
+  "generatedAt": "2026-02-15T06:34:39.774Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 9,
-    "implemented": 7,
+    "total": 7,
+    "implemented": 6,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Create a cohesive Meesho-inspired marketplace UX for a printed T‑shirt business, with a consistent visual theme (colors, typography, spacing, components) applied across all pages.",
+        "id": "REQ-18",
+        "summary": "Update the checkout form to collect an email address in addition to the existing required fields (full name, phone number, and shipping address).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/components/layout/Header.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/components/layout/Header.tsx"
-        ]
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Implement Internet Identity authentication and show signed-in user context in the UI (signed-out state, sign-in button, sign-out control).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/auth/LoginButton.tsx",
-          "frontend/src/hooks/useCurrentUser.ts",
-          "frontend/src/components/auth/ProfileSetupDialog.tsx",
-          "frontend/src/components/auth/AccessDeniedScreen.tsx",
-          "frontend/src/components/auth/ProtectedRoute.tsx",
-          "frontend/src/components/layout/Header.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/auth/LoginButton.tsx",
-          "frontend/src/hooks/useCurrentUser.ts",
-          "frontend/src/components/auth/ProfileSetupDialog.tsx",
-          "frontend/src/components/auth/AccessDeniedScreen.tsx",
-          "frontend/src/components/auth/ProtectedRoute.tsx",
-          "frontend/src/components/layout/Header.tsx"
-        ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Build the buyer storefront flow: product listing page with search and filters (at minimum: price range and size), product detail page (images, description, sizes/colors, price), and add-to-cart functionality with cart page and quantity updates.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useProducts.ts",
-          "frontend/src/utils/money.ts",
-          "frontend/src/utils/images.ts",
-          "frontend/src/cart/cartTypes.ts",
-          "frontend/src/cart/CartContext.tsx",
-          "frontend/src/pages/StorefrontPage.tsx",
-          "frontend/src/pages/ProductDetailPage.tsx",
-          "frontend/src/pages/CartPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useProducts.ts",
-          "frontend/src/utils/money.ts",
-          "frontend/src/utils/images.ts",
-          "frontend/src/cart/cartTypes.ts",
-          "frontend/src/cart/CartContext.tsx",
-          "frontend/src/pages/StorefrontPage.tsx",
-          "frontend/src/pages/ProductDetailPage.tsx",
-          "frontend/src/pages/CartPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Build a simple checkout flow that creates an order (no external payments): collect shipping details (name, phone, address), confirm order summary, and submit the order to the backend.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useOrders.ts",
           "frontend/src/pages/CheckoutPage.tsx",
+          "frontend/src/hooks/useOrders.ts",
           "frontend/src/pages/OrderConfirmationPage.tsx",
-          "frontend/src/cart/CartContext.tsx"
+          "frontend/src/pages/OrderDetailPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useOrders.ts",
           "frontend/src/pages/CheckoutPage.tsx",
+          "frontend/src/hooks/useOrders.ts",
           "frontend/src/pages/OrderConfirmationPage.tsx",
-          "frontend/src/cart/CartContext.tsx"
+          "frontend/src/pages/OrderDetailPage.tsx"
         ]
       },
       {
-        "id": "REQ-5",
-        "summary": "Add buyer order history: a page where signed-in users can view their orders and status (e.g., Placed, Confirmed, Shipped, Delivered, Cancelled) and open an order detail view.",
+        "id": "REQ-19",
+        "summary": "Add an optional promo/referral code input to checkout and apply a 50% discount to the current order total when the entered code matches one of the predefined codes: X7P9K2Q4, L3M8Z1T6, R5V2N9C7, B8Q4Y6W1, T2H7J5K9, P9D3F8L2, Z4X6C1V8, N7M2A5S9, K1R8E4T3, W6Y9U2I5, C3B7N1M8, J8L4P6Q2.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/OrdersPage.tsx",
-          "frontend/src/pages/OrderDetailPage.tsx",
-          "frontend/src/hooks/useOrders.ts"
+          "frontend/src/utils/promoCodes.ts",
+          "frontend/src/pages/CheckoutPage.tsx",
+          "frontend/src/hooks/useOrders.ts",
+          "frontend/src/pages/OrderConfirmationPage.tsx",
+          "frontend/src/pages/OrderDetailPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/OrdersPage.tsx",
-          "frontend/src/pages/OrderDetailPage.tsx",
-          "frontend/src/hooks/useOrders.ts"
+          "frontend/src/utils/promoCodes.ts",
+          "frontend/src/pages/CheckoutPage.tsx",
+          "frontend/src/hooks/useOrders.ts",
+          "frontend/src/pages/OrderConfirmationPage.tsx",
+          "frontend/src/pages/OrderDetailPage.tsx"
         ]
       },
       {
-        "id": "REQ-6",
-        "summary": "Implement backend marketplace data model and APIs in the single Motoko actor to support: product catalog CRUD (for sellers/admin), product listing with basic query parameters (search, filters), cart-independent order creation, and per-user order retrieval.",
+        "id": "REQ-20",
+        "summary": "Extend the backend order model and order creation API to support: (1) storing the buyer email as part of order shipping/contact data and (2) optionally accepting a promo code for one-time discounting during order creation.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-7",
-        "summary": "Add a seller/admin dashboard UI to manage products: create product (title, description, price, sizes, colors, images), edit product, delete product, and view a list of existing products.",
+        "id": "REQ-21",
+        "summary": "Investigate and fix the current Internet Identity login flow so that users can reliably sign in and sign out without getting stuck in an error state such as \"User is already authenticated\" and without requiring manual refreshes.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/admin/AdminDashboardPage.tsx",
-          "frontend/src/pages/admin/ProductEditorPage.tsx",
-          "frontend/src/hooks/useAdminProducts.ts",
+          "frontend/src/hooks/useAuthActions.ts",
+          "frontend/src/components/auth/LoginButton.tsx",
+          "frontend/src/components/layout/Header.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useAuthActions.ts",
+          "frontend/src/components/auth/LoginButton.tsx",
+          "frontend/src/components/layout/Header.tsx"
+        ]
+      },
+      {
+        "id": "REQ-22",
+        "summary": "Add separate entry points for buyers and sellers in the UI, while continuing to use Internet Identity for authentication: buyers should be directed to the storefront/account experience; sellers should be directed to the seller/admin dashboard experience when they have admin access.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AuthEntryPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/layout/Header.tsx",
+          "frontend/src/components/auth/AccessDeniedScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AuthEntryPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/layout/Header.tsx",
+          "frontend/src/components/auth/AccessDeniedScreen.tsx"
+        ]
+      },
+      {
+        "id": "REQ-23",
+        "summary": "Implement a founder login recognition flow for the founder email \"mercutiose369@gmail.com\" so that when the signed-in user provides this email, the UI recognizes them as the founder and grants them the highest available access level within the app's existing role system.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useFounderAccess.ts",
+          "frontend/src/pages/AuthEntryPage.tsx",
+          "frontend/src/components/layout/Header.tsx",
           "frontend/src/components/auth/ProtectedRoute.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/admin/AdminDashboardPage.tsx",
-          "frontend/src/pages/admin/ProductEditorPage.tsx",
-          "frontend/src/hooks/useAdminProducts.ts",
+          "frontend/src/hooks/useFounderAccess.ts",
+          "frontend/src/pages/AuthEntryPage.tsx",
+          "frontend/src/components/layout/Header.tsx",
           "frontend/src/components/auth/ProtectedRoute.tsx"
         ]
       },
       {
-        "id": "REQ-8",
-        "summary": "Seed the app with a small set of demo printed T‑shirt products (including multiple sizes/colors) so the storefront is usable immediately after deployment.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Generate and add required static images to the app and render them from frontend/public/assets/generated (not via backend).",
+        "id": "REQ-24",
+        "summary": "Add an in-app 'Deploy' or 'Publishing' option that clarifies the current deployment behavior and provides a user-facing way to access the live app URL, without requiring unsupported manual deployments.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/public/assets/generated/logo.dim_512x512.png",
-          "frontend/public/assets/generated/hero-banner.dim_1600x600.png",
-          "frontend/public/assets/generated/empty-state.dim_1200x800.png",
-          "frontend/public/assets/generated/product-placeholder.dim_800x800.png",
-          "frontend/src/components/layout/Header.tsx",
-          "frontend/src/pages/StorefrontPage.tsx",
-          "frontend/src/utils/images.ts"
+          "frontend/src/pages/admin/AdminDashboardPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/public/assets/generated/logo.dim_512x512.png",
-          "frontend/public/assets/generated/hero-banner.dim_1600x600.png",
-          "frontend/public/assets/generated/empty-state.dim_1200x800.png",
-          "frontend/public/assets/generated/product-placeholder.dim_800x800.png",
-          "frontend/src/components/layout/Header.tsx",
-          "frontend/src/pages/StorefrontPage.tsx",
-          "frontend/src/utils/images.ts"
+          "frontend/src/pages/admin/AdminDashboardPage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/authorization/MixinAuthorization.mo",
-    "backend/authorization/access-control.mo",
     "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
-    "build-template/Dockerfile",
-    "build-template/LICENSE",
-    "build-template/README.md",
-    "build-template/deploy.sh",
-    "build-template/icp.yaml",
-    "build-template/package.json",
-    "build-template/pnpm-lock.yaml",
-    "build-template/pnpm-workspace.yaml",
-    "build-template/scripts/prune-unused-images.js",
-    "build-template/scripts/resize-images.js",
-    "build-template/src/backend/canister.yaml",
-    "build-template/src/backend/system-idl/aaaaa-aa.did",
-    "build-template/src/frontend/canister.yaml",
-    "build-template/src/frontend/components.json",
-    "build-template/src/frontend/env.json",
-    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
-    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
-    "build-template/src/frontend/eslint.config.js",
-    "build-template/src/frontend/package.json",
-    "build-template/src/frontend/postcss.config.js",
-    "build-template/src/frontend/src/components/ui/accordion.tsx",
-    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
-    "build-template/src/frontend/src/components/ui/alert.tsx",
-    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
-    "build-template/src/frontend/src/components/ui/avatar.tsx",
-    "build-template/src/frontend/src/components/ui/badge.tsx",
-    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
-    "build-template/src/frontend/src/components/ui/button.tsx",
-    "build-template/src/frontend/src/components/ui/calendar.tsx",
-    "build-template/src/frontend/src/components/ui/card.tsx",
-    "build-template/src/frontend/src/components/ui/carousel.tsx",
-    "build-template/src/frontend/src/components/ui/chart.tsx",
-    "build-template/src/frontend/src/components/ui/checkbox.tsx",
-    "build-template/src/frontend/src/components/ui/collapsible.tsx",
-    "build-template/src/frontend/src/components/ui/command.tsx",
-    "build-template/src/frontend/src/components/ui/context-menu.tsx",
-    "build-template/src/frontend/src/components/ui/dialog.tsx",
-    "build-template/src/frontend/src/components/ui/drawer.tsx",
-    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
-    "build-template/src/frontend/src/components/ui/form.tsx",
-    "build-template/src/frontend/src/components/ui/hover-card.tsx",
-    "build-template/src/frontend/src/components/ui/input-otp.tsx",
-    "build-template/src/frontend/src/components/ui/input.tsx",
-    "build-template/src/frontend/src/components/ui/label.tsx",
-    "build-template/src/frontend/src/components/ui/menubar.tsx",
-    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
-    "build-template/src/frontend/src/components/ui/pagination.tsx",
-    "build-template/src/frontend/src/components/ui/popover.tsx",
-    "build-template/src/frontend/src/components/ui/progress.tsx",
-    "build-template/src/frontend/src/components/ui/radio-group.tsx",
-    "build-template/src/frontend/src/components/ui/resizable.tsx",
-    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
-    "build-template/src/frontend/src/components/ui/select.tsx",
-    "build-template/src/frontend/src/components/ui/separator.tsx",
-    "build-template/src/frontend/src/components/ui/sheet.tsx",
-    "build-template/src/frontend/src/components/ui/sidebar.tsx",
-    "build-template/src/frontend/src/components/ui/skeleton.tsx",
-    "build-template/src/frontend/src/components/ui/slider.tsx",
-    "build-template/src/frontend/src/components/ui/sonner.tsx",
-    "build-template/src/frontend/src/components/ui/switch.tsx",
-    "build-template/src/frontend/src/components/ui/table.tsx",
-    "build-template/src/frontend/src/components/ui/tabs.tsx",
-    "build-template/src/frontend/src/components/ui/textarea.tsx",
-    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
-    "build-template/src/frontend/src/components/ui/toggle.tsx",
-    "build-template/src/frontend/src/components/ui/tooltip.tsx",
-    "build-template/src/frontend/src/hooks/use-mobile.tsx",
-    "build-template/src/frontend/src/lib/utils.ts",
-    "build-template/src/frontend/tsconfig.json",
-    "build-template/src/frontend/vite.config.js",
-    "build-template/tsconfig.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.css",
-    "frontend/index.html",
-    "frontend/public/assets/generated/empty-state.dim_1200x800.png",
-    "frontend/public/assets/generated/hero-banner.dim_1600x600.png",
-    "frontend/public/assets/generated/logo.dim_512x512.png",
-    "frontend/public/assets/generated/product-placeholder.dim_800x800.png",
     "frontend/src/App.tsx",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
-    "frontend/src/cart/CartContext.tsx",
-    "frontend/src/cart/cartTypes.ts",
     "frontend/src/components/auth/AccessDeniedScreen.tsx",
     "frontend/src/components/auth/LoginButton.tsx",
     "frontend/src/components/auth/ProfileSetupDialog.tsx",
     "frontend/src/components/auth/ProtectedRoute.tsx",
-    "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/components/layout/Footer.tsx",
     "frontend/src/components/layout/Header.tsx",
-    "frontend/src/config.ts",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useAdminProducts.ts",
-    "frontend/src/hooks/useCurrentUser.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useAuthActions.ts",
+    "frontend/src/hooks/useFounderAccess.ts",
     "frontend/src/hooks/useOrders.ts",
-    "frontend/src/hooks/useProducts.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/CartPage.tsx",
+    "frontend/src/pages/AuthEntryPage.tsx",
     "frontend/src/pages/CheckoutPage.tsx",
     "frontend/src/pages/OrderConfirmationPage.tsx",
     "frontend/src/pages/OrderDetailPage.tsx",
     "frontend/src/pages/OrdersPage.tsx",
-    "frontend/src/pages/ProductDetailPage.tsx",
-    "frontend/src/pages/StorefrontPage.tsx",
     "frontend/src/pages/admin/AdminDashboardPage.tsx",
-    "frontend/src/pages/admin/ProductEditorPage.tsx",
-    "frontend/src/ui-summary.json",
-    "frontend/src/utils/StorageClient.ts",
-    "frontend/src/utils/images.ts",
-    "frontend/src/utils/money.ts",
-    "frontend/src/utils/urlParams.ts",
-    "frontend/tailwind.config.js",
+    "frontend/src/utils/promoCodes.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

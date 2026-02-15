@@ -17,9 +17,14 @@ export default function AccessDeniedScreen() {
             You don't have permission to access this page. Please contact an administrator if you believe this is an error.
           </p>
         </div>
-        <Button onClick={() => navigate({ to: '/' })}>
-          Return to Home
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={() => navigate({ to: '/' })}>
+            Return to Storefront
+          </Button>
+          <Button onClick={() => navigate({ to: '/auth' })} variant="outline">
+            Sign In
+          </Button>
+        </div>
       </div>
     </div>
   );

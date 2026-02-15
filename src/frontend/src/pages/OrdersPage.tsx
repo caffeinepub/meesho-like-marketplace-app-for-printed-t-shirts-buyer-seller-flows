@@ -101,8 +101,8 @@ function OrdersPageContent() {
             <CardContent>
               <div className="flex justify-between items-center">
                 <div className="text-sm text-muted-foreground">
-                  <p>Deliver to: {order.shippingAddress.fullName}</p>
-                  <p>{order.shippingAddress.city}</p>
+                  <p>Deliver to: {order.contactInfo.shippingAddress.fullName}</p>
+                  <p>{order.contactInfo.shippingAddress.city}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-primary">

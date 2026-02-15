@@ -1,54 +1,39 @@
-import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useQueryClient } from '@tanstack/react-query';
+import { useAuthActions } from '../../hooks/useAuthActions';
 import { Button } from '@/components/ui/button';
 import { LogIn, LogOut, Loader2 } from 'lucide-react';
 
 export default function LoginButton() {
-  const { login, clear, loginStatus, identity } = useInternetIdentity();
-  const queryClient = useQueryClient();
+  const { logout, isAuthenticated, isLoggingIn } = useAuthActions();
 
-  const isAuthenticated = !!identity;
-  const isLoading = loginStatus === 'logging-in';
-
-  const handleAuth = async () => {
-    if (isAuthenticated) {
-      await clear();
-      queryClient.clear();
-    } else {
-      try {
-        await login();
-      } catch (error: any) {
-        console.error('Login error:', error);
-        if (error.message === 'User is already authenticated') {
-          await clear();
-          setTimeout(() => login(), 300);
-        }
-      }
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      // Error already handled in useAuthActions
     }
   };
 
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <Button
-      onClick={handleAuth}
-      disabled={isLoading}
-      variant={isAuthenticated ? 'ghost' : 'default'}
+      onClick={handleLogout}
+      disabled={isLoggingIn}
+      variant="ghost"
       size="sm"
       className="w-full justify-start"
     >
-      {isLoading ? (
+      {isLoggingIn ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Logging in...
-        </>
-      ) : isAuthenticated ? (
-        <>
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
+          Logging out...
         </>
       ) : (
         <>
-          <LogIn className="mr-2 h-4 w-4" />
-          Login
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
         </>
       )}
     </Button>

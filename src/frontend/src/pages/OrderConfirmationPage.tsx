@@ -3,7 +3,8 @@ import { useGetOrder } from '../hooks/useOrders';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, Loader2, Package } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle2, Loader2, Package, Mail, Phone, MapPin } from 'lucide-react';
 import { formatPrice } from '../utils/money';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 
@@ -70,21 +71,55 @@ function OrderConfirmationPageContent() {
 
             <Separator />
 
+            {/* Contact Information */}
+            <div className="space-y-2">
+              <h3 className="font-semibold">Contact Information</h3>
+              <div className="text-sm text-muted-foreground space-y-1">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  <span>{order.contactInfo.email}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  <span>{order.contactInfo.shippingAddress.phone}</span>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
             {/* Shipping Address */}
             <div className="space-y-2">
-              <h3 className="font-semibold">Shipping Address</h3>
+              <h3 className="font-semibold flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                Shipping Address
+              </h3>
               <div className="text-sm text-muted-foreground space-y-1">
-                <p>{order.shippingAddress.fullName}</p>
-                <p>{order.shippingAddress.phone}</p>
-                <p>{order.shippingAddress.addressLine1}</p>
-                {order.shippingAddress.addressLine2 && <p>{order.shippingAddress.addressLine2}</p>}
+                <p>{order.contactInfo.shippingAddress.fullName}</p>
+                <p>{order.contactInfo.shippingAddress.addressLine1}</p>
+                {order.contactInfo.shippingAddress.addressLine2 && (
+                  <p>{order.contactInfo.shippingAddress.addressLine2}</p>
+                )}
                 <p>
-                  {order.shippingAddress.city}, {order.shippingAddress.zip}
+                  {order.contactInfo.shippingAddress.city}, {order.contactInfo.shippingAddress.zip}
                 </p>
               </div>
             </div>
 
             <Separator />
+
+            {/* Promo Code Applied */}
+            {order.promoApplied && order.promoCode && (
+              <>
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Promo Code Applied</h3>
+                  <Badge variant="secondary" className="text-sm">
+                    {order.promoCode} - 50% off
+                  </Badge>
+                </div>
+                <Separator />
+              </>
+            )}
 
             {/* Total */}
             <div className="flex justify-between text-lg font-bold">

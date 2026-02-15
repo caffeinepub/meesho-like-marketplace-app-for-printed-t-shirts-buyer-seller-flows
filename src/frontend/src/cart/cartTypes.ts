@@ -7,5 +7,5 @@ export interface CartItem {
   size: string;
   color: string;
   quantity: number;
-  imageBlob?: Uint8Array;
+  imageUrl: string;
 }
